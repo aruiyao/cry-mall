@@ -1,0 +1,97 @@
+@import "./theme.scss";
+
+[v-cloak] {
+  display: none;
+}
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+html, body, #app {
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  font-family: PingFang SC, Helvetica Neue, Helvetica, Arial, Hiragino Sans GB, Microsoft Yahei, \\5FAE\8F6F\96C5\9ED1, STHeiti, \\534E\6587\7EC6\9ED1, sans-serif;
+  color: #666;
+  font-size: 14px;
+  background-color: $color-bg;
+}
+
+a {
+  font-style: normal;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+li {
+  list-style-type: none;
+}
+
+input,
+img,
+button {
+  border: none;
+  outline: none;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-size: 100%;
+  font-weight: 400;
+}
+
+i,
+em {
+  font-style: normal;
+  font-size: 14px;
+}
+
+.el-icon-if {
+  font-size: 14px;
+}
+
+input[type=number],
+textarea {
+  -moz-appearance: textfield;
+}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button,
+input[type="submit"],
+input[type="search"],
+input[type="reset"] {
+  -webkit-appearance: none;
+}
+
+::-webkit-input-placeholder {
+  /* WebKit browsers */
+  text-shadow: $text-shadow;
+  color: #BEBEBE;
+}
+
+:-moz-placeholder {
+  /* Mozilla Firefox 4 to 18 */
+  text-shadow: $text-shadow;
+  color: #BEBEBE;
+}
+
+::-moz-placeholder {
+  /* Mozilla Firefox 19+ */
+  text-shadow: $text-shadow;
+  color: #BEBEBE;
+}
+
+:-ms-input-placeholder {
+  /* Internet Explorer 10+ */
+  text-shadow: $text-shadow;
+  color: #BEBEBE;
+}

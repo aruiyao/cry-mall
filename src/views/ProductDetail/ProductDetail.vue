@@ -1,0 +1,377 @@
+<template>
+  <div>
+    <div class="info">
+      <div class="w">
+        <div class="info-left">
+          <div class="img-list">
+            <template v-for="(img,index) in imageList">
+              <img :src="img.url" alt="" :key="img.id" @mouseenter="smallIndex=index">
+            </template>
+          </div>
+          <div class="img-big">
+            <template v-for="(img,index) in imageList">
+              <img :src="img.url" alt="" :key="img.id" v-show="smallIndex===index">
+            </template>
+          </div>
+        </div>
+        <div class="info-rigth">
+          <h3>{{product.name}}</h3>
+          <p class="parameters">{{product.parameterDesc}}</p>
+          <div class="price">
+            <div class="price-num">{{product.price}}</div>
+            <div class="price-unit">元</div>
+          </div>
+          <div class="promotion-box">
+            <p class="title">促销活动</p>
+            <p class="promotion">精选配件&nbsp;&nbsp;&nbsp;&nbsp;限时直降</p>
+          </div>
+          <div>
+            <p class="title">颜色选择</p>
+            <div class="choose-btn">
+              <el-button v-for="(item,index) in colorList" :key="item.color" @click="selectedIndex=index"
+                         :class="{'selected':selectedIndex===index}"
+                         :icon="selectdeIcon(index)">
+                {{item.color}}
+              </el-button>
+            </div>
+          </div>
+          <div class="num">
+            <p class="title">数量选择</p>
+            <el-input-number v-model="num" @change="handleChange" :min="1" :max="10"></el-input-number>
+          </div>
+          <div class="after-sale-info">
+            <div>
+              <i class="el-icon-if icon-wanchenggouxuan"></i>
+              <span>商品只用于展示</span>
+            </div>
+            <div>
+              <i class="el-icon-if icon-wanchenggouxuan"></i>
+              <span>商品只用于展示</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <footer>
+      <div class="w">
+        <div class="choose-info-box">
+          <p class="box-text">您已选择</p>
+          <div class="choose-info">
+            <p><strong>{{product.name}} × 1</strong></p>
+            <p>白色</p>
+          </div>
+        </div>
+        <div class="btn-box">
+          <span class="total-price">
+            <strong>
+            <i>￥</i>111
+            </strong>
+          </span>
+          <el-button class="buy" icon="el-icon-if icon-buy-icon">立即购买</el-button>
+          <el-button class="cart" icon="el-icon-if icon-Cart">加入购物车</el-button>
+        </div>
+      </div>
+    </footer>
+    <div class="detail-img"></div>
+
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'ProductDetail',
+  data () {
+    return {
+      num: 1,
+      selectedIndex: 0,
+      colorList: [],
+      imageList: [],
+      product: {},
+      smallIndex: 0
+    };
+  },
+  created () {
+    this.colorList = [
+      // { color: '绿色' },
+      // { color: '黑色' },
+      // { color: '蓝色' },
+      { color: '石墨黑' }
+    ];
+    this.getProductInfo();
+  },
+  methods: {
+    handleChange () {
+
+    },
+    async getProductInfo () {
+      const [err, res] = await this.$http.asyncGet('api/v1.0/getProductInfoById', { id: 4 });
+      if (!err && res) {
+        if (res.data.success) {
+          this.product = res.data.data.product;
+          this.imageList = this.product.imageList;
+          this.bigImage = this.imageList[0];
+        } else {
+          this.$vmessage.error(res.data.msg);
+        }
+      }
+    }
+  },
+  computed: {
+    selectdeIcon () {
+      return function (index) {
+        return this.selectedIndex === index ? 'el-icon-if icon-duigou' : '';
+      };
+    }
+  }
+};
+</script>
+
+<style lang="scss" scoped>
+  @import "~@/assets/style/theme.scss";
+
+  .info {
+    padding-bottom: 100px;
+    .w {
+      display: flex;
+      justify-content: space-between;
+    }
+  }
+
+  .info-left {
+    display: flex;
+    width: 600px;
+  }
+
+  .img-list {
+    width: 100px;
+
+    img {
+      width: 70px;
+      height: 70px;
+      cursor: pointer;
+      display: block;
+      margin: 20px auto 0;
+      box-shadow: $box-shadow;
+
+      &:hover {
+        box-shadow: -2px -2px 5px $color-white, 2px 2px 5px $color-shadow;
+      }
+
+      &:first-child {
+        margin-top: 0;
+      }
+    }
+  }
+
+  .img-big {
+    width: 500px;
+
+    img {
+      width: 500px;
+      height: 500px;
+    }
+  }
+
+  .info-rigth {
+    width: 600px;
+
+    h3 {
+      font-size: 24px;
+      color: #000;
+    }
+  }
+
+  .parameters {
+    font-size: 14px;
+    color: #b0b0b0;
+    padding-top: 8px;
+    line-height: 1.5;
+  }
+
+  .title {
+    font-size: 18px;
+    color: #000;
+    padding: 10px 0;
+  }
+
+  .promotion-box {
+    border-bottom: 1px solid #d6d6d6;
+
+    .promotion {
+      margin-left: 10px;
+      padding-bottom: 10px;
+    }
+  }
+
+  .choose-btn {
+    display: flex;
+    flex-wrap: wrap;
+
+    .el-button {
+      border-radius: 5px;
+      width: 250px;
+      height: 50px;
+      margin: 10px;
+      padding: 0;
+
+      ::v-deep .icon-duigou {
+        font-size: 20px;
+        color: #00a854;
+      }
+    }
+
+    .selected {
+      box-shadow: inset 1px 1px 2px #BABECC, inset -1px -1px 2px #FFF;
+    }
+  }
+
+  .btn-inner {
+    display: flex;
+    justify-content: center;
+  }
+
+  .el-input-number {
+    width: 100px;
+
+    ::v-deep .el-input__inner {
+      border-radius: 5px;
+    }
+  }
+
+  .price {
+    display: flex;
+    font-size: 18px;
+    line-height: 1;
+    color: #ff6700;
+    padding: 12px 0 10px;
+    border-bottom: 1px solid #d6d6d6;
+
+    .price-unit {
+      margin-left: 5px;
+    }
+  }
+
+  .after-sale-info {
+    display: flex;
+    margin-top: 40px;
+
+    div {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      margin-left: 10px;
+    }
+
+    i {
+      font-size: 20px;
+    }
+
+    span {
+      margin-left: 5px;
+    }
+  }
+
+  footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    z-index: 100;
+    height: 80px;
+    background-color: $color-bg;
+    box-shadow: 0 -1px 5px $color-shadow;
+    border-bottom: 1px solid #d6d6d6;
+
+    .w {
+      height: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+  }
+
+  .choose-info-box {
+    width: 400px;
+    display: flex;
+
+    .box-text {
+      width: 70px;
+    }
+  }
+
+  .btn-box {
+    .el-button {
+      width: 150px;
+      height: 40px;
+    }
+
+    ::v-deep i {
+      font-size: 20px;
+    }
+
+    .buy{
+      color: #ff6347;
+    }
+    .cart {
+      color: #8500ff;
+      margin-left: 30px;
+    }
+  }
+
+  .total-price {
+    color: #ff6700;
+    margin-right: 40px;
+    font-size: 20px;
+
+    i {
+      font-size: 14px;
+      margin-right: 5px;
+    }
+  }
+
+  .el-input-number {
+    margin-left: 60px;
+
+    ::v-deep .el-input__inner {
+      padding: 0;
+    }
+
+    ::v-deep .el-input-number__decrease, ::v-deep .el-input-number__increase {
+      border: 0;
+      border-radius: 3px;
+      box-shadow: 9px 9px 9px rgba(0, 0, 0, 0.06), -9px -9px 9px rgba(255, 255, 255, 0.6),
+      inset 5px 5px 5px rgba(0, 0, 0, 0.07), inset -5px -5px 5px rgba(255, 255, 255, 0.7);
+
+      &.is-disabled{
+        color: #606266;
+        i:before{
+          box-shadow: inset 3px 3px 3px rgba(255, 255, 255, 0.5), inset -3px -3px 3px rgba(0, 0, 0, 0.05);
+        }
+      }
+    }
+
+    ::v-deep .el-input-number__decrease {
+      left: -55px;
+    }
+
+    ::v-deep .el-input-number__increase {
+      right: -55px;
+    }
+
+    ::v-deep i{
+      line-height: 40px;
+      font-weight: bolder;
+      &:active {
+        &:before {
+          box-shadow: inset 3px 3px 3px rgba(0,0,0,0.05), inset -3px -3px 3px rgba(255,255,255,0.5)
+        }
+      }
+      &:before {
+        padding: 10px;
+        border-radius: 3px;
+        background-color: rgba(255, 153, 0, 0.6);
+        box-shadow: inset 3px 3px 3px rgba(255, 255, 255, 0.5), inset -3px -3px 3px rgba(0, 0, 0, 0.05);
+      }
+    }
+  }
+</style>

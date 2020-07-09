@@ -1,0 +1,82 @@
+@import "theme";
+
+.el-button, .el-input__inner {
+  border: 0;
+  outline: 0;
+  border-radius: 24px;
+  background-color: transparent;
+}
+.el-button{
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  width: 200px;
+  height: 50px;
+}
+.el-input__inner::-webkit-input-placeholder, textarea::-webkit-input-placeholder {
+  color: #a9a9a9;
+}
+
+.el-input__inner:-moz-placeholder, textarea:-moz-placeholder {
+  color: #a9a9a9;
+}
+
+.el-input__inner::-moz-placeholder, textarea::-moz-placeholder {
+  color: #a9a9a9;
+}
+
+.el-input__inner:-ms-input-placeholder, textarea:-ms-input-placeholder {
+  color: #a9a9a9;
+}
+
+.el-input__inner {
+  box-shadow: inset 2px 2px 5px $color-shadow, inset -2px -2px 10px $color-white;
+  width: 100%;
+  box-sizing: border-box;
+  transition: all 0.2s ease-in-out;
+  appearance: none;
+  -webkit-appearance: none;
+
+  &:focus {
+    box-shadow: inset 1px 1px 2px $color-shadow, inset -1px -1px 2px $color-white;
+  }
+}
+
+.el-input__icon {
+  text-shadow: $text-shadow;
+}
+
+.el-form-item__error {
+  margin-left: 15px;
+}
+
+.el-button {
+  color: #61677C;
+  box-shadow: -5px -5px 10px $color-white, 5px 5px 20px $color-shadow;
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+  font-weight: 600;
+  text-shadow: $text-shadow;
+
+  &:hover {
+    box-shadow: -2px -2px 5px $color-white, 2px 2px 5px $color-shadow;
+    color: #61677C;
+    background-color: $color-bg;
+  }
+
+  &:focus {
+    box-shadow: -2px -2px 5px $color-white, 2px 2px 5px $color-shadow;
+    color: #61677C;
+    background-color: $color-bg;
+  }
+
+  &:active {
+    box-shadow: inset 1px 1px 2px $color-shadow, inset -1px -1px 2px $color-white;
+  }
+}
+
+/*计数器*/
+.el-input-number__decrease, .el-input-number__increase {
+  background: transparent;
+}
