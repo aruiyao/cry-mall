@@ -10,7 +10,7 @@ import VMessage from '@/components/messageTips';
 import VMessageBox from '@/components/messageBox';
 import VueLazyload from 'vue-lazyload';
 
-Vue.config.productionTip = false;
+Vue.config.goodsionTip = false;
 
 Vue.prototype.$http = selfAxios;
 Vue.prototype.$vmessage = VMessage;

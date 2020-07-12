@@ -9,7 +9,7 @@
     <h3 class="sub-title ellipsis">{{goods.featureDesc}}</h3>
     <div class="good-price pr">
       <div class="ds pa">
-        <el-button @click="productDetail(goods.id)">查看详情</el-button>
+        <el-button @click="goodsDetail(goods.id)">查看详情</el-button>
         <el-button class="addcart" @click="addCart(goods.id,goods.price,goods.name,goods.mainImage)">
           加入购物车
         </el-button>
@@ -32,12 +32,12 @@ export default {
   },
   methods: {
     ...mapMutations(['ADDCART']),
-    productDetail (id) {
+    goodsDetail (id) {
       // 编程式导航
       this.$router.push({
         name: 'goodsDetail',
         query: {
-          productId: id
+          goodsId: id
         }
       });
     },
@@ -46,23 +46,23 @@ export default {
         // 用户已登录
         this.$http.post('/api/addCart', {
           userId: getStore('id'),
-          productId: id,
-          productNum: 1
+          goodsId: id,
+          goodsNum: 1
         });
         // 已经存储到后端中， 将当前的商品存储到store的cartList
         this.ADDCART({
-          productId: id,
+          goodsId: id,
           salePrice: price,
-          productName: name,
-          productImageBig: img
+          goodsName: name,
+          goodsImageBig: img
         });
       } else {
         // 如果用户未登录 也要将商品存储到store的cartList
         this.ADDCART({
-          productId: id,
+          goodsId: id,
           salePrice: price,
-          productName: name,
-          productImageBig: img
+          goodsName: name,
+          goodsImageBig: img
         });
       }
     }

@@ -15,10 +15,10 @@
           </div>
         </div>
         <div class="info-rigth">
-          <h3>{{product.name}}</h3>
-          <p class="parameters">{{product.parameterDesc}}</p>
+          <h3>{{goods.name}}</h3>
+          <p class="parameters">{{goods.parameterDesc}}</p>
           <div class="price">
-            <div class="price-num">{{product.price}}</div>
+            <div class="price-num">{{goods.price}}</div>
             <div class="price-unit">元</div>
           </div>
           <div class="promotion-box">
@@ -57,7 +57,7 @@
         <div class="choose-info-box">
           <p class="box-text">您已选择</p>
           <div class="choose-info">
-            <p><strong>{{product.name}} × 1</strong></p>
+            <p><strong>{{goods.name}} × 1</strong></p>
             <p>白色</p>
           </div>
         </div>
@@ -81,14 +81,14 @@
 import { getStore } from '@/utils/storage';
 
 export default {
-  name: 'ProductDetail',
+  name: 'GoodsDetail',
   data () {
     return {
       num: 1,
       selectedIndex: 0,
       colorList: [],
       imageList: [],
-      product: {},
+      goods: {},
       smallIndex: 0,
       userId: getStore('userId'),
       cartList: []
@@ -101,18 +101,18 @@ export default {
       // { color: '蓝色' },
       { color: '石墨黑' }
     ];
-    this.getProductInfo();
+    this.getGoodsInfo();
     this.getCart();
   },
   methods: {
     handleChange () {
     },
-    async getProductInfo () {
-      const [err, res] = await this.$http.asyncGet('api/v1.0/getProductInfoById', { id: 4 });
+    async getGoodsInfo () {
+      const [err, res] = await this.$http.asyncGet('api/v1.0/getGoodsInfoById', { id: 4 });
       if (!err && res) {
         if (res.data.success) {
-          this.product = res.data.data.product;
-          this.imageList = this.product.imageList;
+          this.goods = res.data.data.goods;
+          this.imageList = this.goods.imageList;
         } else {
           this.$vmessage.error(res.data.msg);
         }
@@ -122,7 +122,7 @@ export default {
     async addCart () {
       const params = {
         userId: this.userId,
-        productId: 1,
+        goodsId: 1,
         num: this.num
       };
       const [err, res] = await this.$http.asyncPost('api/v1.0/check/addCart', params);

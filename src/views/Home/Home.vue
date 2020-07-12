@@ -31,7 +31,7 @@
     <section class="w clearfix">
       <cry-shelf title="热门商品">
         <div slot="content" class="hot">
-          <cry-goods v-for="item in hotProductList" :key="item.id" :goods="item"></cry-goods>
+          <cry-goods v-for="item in hotGoodsList" :key="item.id" :goods="item"></cry-goods>
         </div>
       </cry-shelf>
     </section>
@@ -74,7 +74,7 @@ export default {
       bannerList: [],
       homeList: [],
       promotionList: [],
-      hotProductList: [],
+      hotGoodsList: [],
       mark: 0
     };
   },
@@ -110,10 +110,10 @@ export default {
           for (const item of plateInfoList) {
             switch (item.type) {
               case 0:
-                this.promotionList = item.productList;
+                this.promotionList = item.goodsList;
                 break;
               case 1:
-                this.hotProductList = item.productList;
+                this.hotGoodsList = item.goodsList;
                 break;
               case 2:
                 break;
@@ -147,7 +147,7 @@ export default {
       clearInterval(this.timer);
     },
     linkTo () {
-      const { href } = this.$router.resolve('/productdetail');
+      const { href } = this.$router.resolve('/goodsdetail');
       window.open(href, '_blank');
     }
   }

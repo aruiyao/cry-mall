@@ -14,7 +14,7 @@
               <el-input
                   placeholder="请输入商品信息"
                   prefix-icon="el-icon-search"
-                  v-model="productInfo"
+                  v-model="goodsInfo"
                   minlength="1"
                   maxlength="100"
               ></el-input>
@@ -77,16 +77,16 @@
                               <div class="cart-item-inner">
                                 <a>
                                   <div class="item-thumb">
-                                    <img :src="cart.product.mainImage">
+                                    <img :src="cart.goods.mainImage">
                                   </div>
                                   <div class="item-desc">
                                     <div class="cart-cell">
                                       <h4>
-                                        <a href>{{cart.product.name}}</a>
+                                        <a href>{{cart.goods.name}}</a>
                                       </h4>
                                       <h6>
                                         <span class="price-icon">¥</span>
-                                        <span class="price-num">{{cart.product.price}}</span>
+                                        <span class="price-num">{{cart.goods.price}}</span>
                                         <span class="item-num">x {{cart.num}}</span>
                                       </h6>
                                     </div>
@@ -141,13 +141,13 @@
 
 <script>
 import { mapState } from 'vuex';
-import { removeStore, getStore, setStore } from '@/utils/storage';
+import { removeStore } from '@/utils/storage';
 
 export default {
   name: 'CryHeader',
   data () {
     return {
-      productInfo: '',
+      goodsInfo: '',
       isLogin: false,
       isFixed: false,
       scrollLeft: ''
@@ -164,7 +164,7 @@ export default {
       return (
         this.cartList &&
             this.cartList.reduce((total, item) => {
-              total += item.productNum * item.salePrice;
+              total += item.goodsNum * item.salePrice;
               return total;
             }, 0)
       );
