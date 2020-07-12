@@ -33,6 +33,7 @@
 import { setStore } from '@/utils/storage';
 export default {
   name: 'Login',
+  props: ['redirectUrl'],
   data () {
     return {
       loginForm: {
@@ -72,7 +73,11 @@ export default {
             if (res.data.success) {
               setStore('token', res.data.data.token);
               setStore('userId', res.data.data.userId);
-              this.$router.push('/home');
+              if (this.redirectUrl) {
+                window.location.href = this.redirectUrl;
+              } else {
+                this.$router.push('/home');
+              }
             } else {
               this.loginErrorMsg = res.data.msg;
             }

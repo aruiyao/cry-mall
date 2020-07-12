@@ -1,79 +1,96 @@
+@import "theme";
+
 .w {
-    width: 1220px;
-    margin: 0 auto;
+  width: 1220px;
+  margin: 0 auto;
 }
 
 .fl {
-    float: left;
+  float: left;
 }
 
 .fr {
-    float: right;
+  float: right;
 }
 
 .pr {
-    position: relative;
+  position: relative;
 }
 
 .pa {
-    position: absolute;
+  position: absolute;
 }
 
 .active {
-    color: #c81623;
+  color: #c81623;
 }
 
 .clearfix:after {
-    content: '';
-    display: block;
-    clear: both;
-    line-height: 0;
-    visibility: hidden;
+  content: '';
+  display: block;
+  clear: both;
+  line-height: 0;
+  visibility: hidden;
 }
 
 .clearfix {
-    *zoom: 1
+  *zoom: 1
 }
 
-.header-box + div{
-    margin-top: 20px;
+.header-box + div {
+  margin-top: 20px;
 }
 
 .ellipsis {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 // 删除按钮
 .del-btn {
-    display: block;
-    cursor: pointer;
-    width: 20px;
-    height: 20px;
-    background-size: 240px 107px;
-    text-indent: -9999em;
+  display: block;
+  cursor: pointer;
+  width: 20px;
+  height: 20px;
+  background-size: 240px 107px;
+  text-indent: -9999em;
 
-    &:hover {
-        background-position: -75px -60px;
-    }
+  &:hover {
+    background-position: -75px -60px;
+  }
 }
 
 .layout-container {
-    min-height: 400px;
-    background: #E6E6E6;
+  min-height: 400px;
+  background: #E6E6E6;
 }
 
 .gray-box {
-    //overflow: hidden;
-    //background: #fff;
-    border-radius: 8px;
-    //border: 1px solid rgba(0, 0, 0, .14);
-    //box-shadow: 0 3px 8px -6px rgba(0, 0, 0, .1);
+  //overflow: hidden;
+  //background: #fff;
+  border-radius: 8px;
+  //border: 1px solid rgba(0, 0, 0, .14);
+  //box-shadow: 0 3px 8px -6px rgba(0, 0, 0, .1);
 }
-.icon-btn{
-    border-radius: 5px;
-    width: 30px;
-    height: 30px;
-    padding: 0;
+
+.icon-btn {
+  border-radius: 5px;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+}
+
+.cry-notify.el-notification {
+  background-color: $color-bg;
+  border: 0;
+  box-shadow: 3px 3px 5px $color-shadow, -3px -3px 5px white;
+  z-index: 10!important;
+  .el-notification__content{
+    color: #3aaf00;
+    margin: 0;
+    line-height: 24px;
+    text-shadow: $text-shadow;
+    font-weight: bolder;
+  }
 }

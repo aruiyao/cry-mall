@@ -30,7 +30,8 @@ const routes = [
   {
     path: '/login',
     name: 'login',
-    component: () => import('@/views/Login/Login')
+    component: () => import('@/views/Login/Login'),
+    props: (route) => ({ redirectUrl: route.query.redirectUrl })
   },
   {
     path: '/403',

@@ -1,11 +1,14 @@
 import axios from 'axios';
 import vMessage from '@/components/messageTips';
+import qs from 'qs';
+import router from '@/router';
 
 const service = axios.create({
   // 请求超时时间
   // timeout: 3000
 });
 // service.defaults.withCredentials = true;
+service.defaults.headers['Content-Type'] = 'application/x-www-form-urlencoded';
 
 // 请求拦截器
 service.interceptors.request.use(
@@ -24,8 +27,14 @@ service.interceptors.response.use(
   response => {
     if (response.status === 200) {
       return response;
-    } else {
-      // router.replace('/403');
+    } else if (response.status === 207) {
+      console.log(router.currentRoute);
+      router.push({
+        name: 'login',
+        query: {
+          redirectUrl: location.href
+        }
+      });
     }
   },
   err => {
@@ -60,7 +69,7 @@ const asyncPost = (url, data, config, errorExt) => {
   const obj = Object.assign({
     url: `${window.projectConfig.url}/${url}`,
     method: 'post',
-    data
+    data: qs.stringify(data)
   }, config);
   return to(service(obj), errorExt);
 };

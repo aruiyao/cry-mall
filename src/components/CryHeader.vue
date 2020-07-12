@@ -61,7 +61,7 @@
               </div>
 
               <!-- 购物车 -->
-              <div class="shop pr" @mouseenter="cartShowState(true)" @mouseleave="cartShowState(false)">
+              <div class="shop pr">
                 <el-badge :value="12" class="item">
                   <el-button icon="el-icon-if icon-Cart" class="icon-btn"></el-button>
                 </el-badge>
@@ -72,22 +72,22 @@
                     <div class="full">
                       <div class="nav-cart-items">
                         <ul>
-                          <li class="clearfix" v-for="(goods,index) in cartList" :key="index">
+                          <li class="clearfix" v-for="(cart,index) in cartList" :key="index">
                             <div class="cart-item">
                               <div class="cart-item-inner">
                                 <a>
                                   <div class="item-thumb">
-                                    <img :src="goods.productImageBig">
+                                    <img :src="cart.product.mainImage">
                                   </div>
                                   <div class="item-desc">
                                     <div class="cart-cell">
                                       <h4>
-                                        <a href>{{goods.productName}}</a>
+                                        <a href>{{cart.product.name}}</a>
                                       </h4>
                                       <h6>
                                         <span class="price-icon">¥</span>
-                                        <span class="price-num">{{goods.salePrice}}</span>
-                                        <span class="item-num">x {{goods.productNum}}</span>
+                                        <span class="price-num">{{cart.product.price}}</span>
+                                        <span class="item-num">x {{cart.num}}</span>
                                       </h6>
                                     </div>
                                   </div>
@@ -104,11 +104,6 @@
                           共
                           <strong>{{totalNum}}</strong> 件商品
                         </p>
-                        <h5>
-                          合计：
-                          <span class="price-icon">¥</span>
-                          <span class="price-num">{{totalPrice}}</span>
-                        </h5>
                         <h6>
                           <el-button class="popup-cart">
                             <i class="el-icon-if icon-Cart"></i>
@@ -117,7 +112,8 @@
                         </h6>
                       </div>
                     </div>
-                    <div style="height: 313px;text-align: center" class="cart-con" v-if='!totalNum'>
+                    <div style="text-align: center" class="cart-con" v-if='!totalNum'>
+                      <div class="el-icon-if icon-kong"></div>
                       <p>您的购物车竟然是空的!</p>
                     </div>
                   </div>
@@ -129,7 +125,7 @@
       </header>
     </div>
     <slot name="nav">
-      <div class="nav-sub" :class="{fixed:isFixed}">
+      <div class="nav-sub" :class="{fixed:isFixed}" :style="`left:-${scrollLeft}px`">
         <div class="nav-sub-wrapper">
           <div class="w">
             <ul class="clearfix">
@@ -144,7 +140,7 @@
 </template>
 
 <script>
-import { mapState, mapMutations } from 'vuex';
+import { mapState } from 'vuex';
 import { removeStore, getStore, setStore } from '@/utils/storage';
 
 export default {
@@ -153,19 +149,16 @@ export default {
     return {
       productInfo: '',
       isLogin: false,
-      isFixed: false
+      isFixed: false,
+      scrollLeft: ''
     };
   },
   computed: {
-    ...mapState(['login', 'userInfo', 'cartList', 'showCart']),
+    ...mapState({
+      cartList: state => state.cartList
+    }),
     totalNum () {
-      return (
-        this.cartList &&
-            this.cartList.reduce((total, item) => {
-              total += item.productNum;
-              return total;
-            }, 0)
-      );
+      return this.cartList.length;
     },
     totalPrice () {
       return (
@@ -181,22 +174,11 @@ export default {
     this.navFixed();
     window.addEventListener('scroll', this.navFixed);
     window.addEventListener('resize', this.navFixed);
-    if (this.login) {
-      const res = await this.$http.post('/api/cartList', { userId: getStore('id') });
-      if (res.data.success === true) {
-        setStore('buyCart', res.data.cartList.cartList);
-        this.INITBUYCART();
-      }
-    } else {
-      this.INITBUYCART();
-    }
+    window.addEventListener('scroll', this.handleScroll, true); // 监听（绑定）滚轮滚动事件
   },
   methods: {
-    ...mapMutations(['SHOWCART', 'INITBUYCART']),
-    cartShowState (state) {
-      this.SHOWCART({
-        showCart: state
-      });
+    handleScroll () {
+      this.scrollLeft = document.documentElement.scrollLeft || document.body.scrollLeft;
     },
     navFixed () {
       var st = document.documentElement.scrollTop || document.body.scrollTop;
@@ -237,6 +219,7 @@ export default {
 
   .header-box {
     width: 100%;
+    min-width: 1220px;
     box-shadow: 15px 5px 30px $color-shadow;
   }
 
@@ -272,7 +255,7 @@ export default {
     &.fixed {
       position: fixed;
       top: -40px;
-      margin-left: 342px;
+      margin-left: 314px;
       transform: translateY(50px);
       transition: transform .3s cubic-bezier(.165, .84, .44, 1);
 
@@ -328,7 +311,6 @@ export default {
       }
 
       &:hover {
-        /*font-size: 15px;*/
         color: #696969;
         text-shadow: 3px 3px 1px rgba(0, 0, 0, 0.1);
 
@@ -516,7 +498,7 @@ export default {
       left: unset;
       transform: unset;
       right: -25px;
-      width: 360px;
+      width: 340px;
 
       &:before {
         left: unset;
@@ -555,8 +537,8 @@ export default {
       .item-thumb {
         position: relative;
         float: left;
-        width: 80px;
-        height: 80px;
+        width: 60px;
+        height: 60px;
         border-radius: 3px;
 
         &:before {
@@ -574,7 +556,8 @@ export default {
 
         img {
           display: block;
-          @include wh(80px, 80px);
+          width: 60px;
+          height: 60px;
           border-radius: 3px;
           overflow: hidden;
         }
@@ -583,7 +566,8 @@ export default {
       .item-desc {
         margin-left: 98px;
         display: table;
-        @include wh(205px, 80px);
+        width: 205px;
+        height: 60px;
 
         h4 {
           color: #000;
@@ -619,7 +603,7 @@ export default {
           span {
             display: inline-block;
             font-weight: 700;
-            color: #cacaca;
+            color: #979797;
           }
 
           .price-icon, .price-num {
@@ -656,7 +640,7 @@ export default {
       box-sizing: content-box;
       position: relative;
       padding: 20px;
-      height: 40px;
+      height: 30px;
       border-top: 1px solid #f0f0f0;
       border-radius: 0 0 8px 8px;
       box-shadow: inset 0 -1px 0 hsla(0, 0%, 100%, 0.5),
@@ -664,9 +648,9 @@ export default {
 
       p {
         margin-bottom: 4px;
-        line-height: 16px;
+        line-height: 30px;
         font-size: 12px;
-        color: #a9a9a9;
+        color: #656565;
       }
 
       h5 {
@@ -690,20 +674,20 @@ export default {
       h6 {
         position: absolute;
         right: 35px;
-        top: 22px;
+        top: 17px;
         width: 108px;
       }
     }
   }
 
   .nav-cart-items {
-    max-height: 363px;
+    max-height: 50vh;
     overflow-x: hidden;
     overflow-y: auto;
   }
 
   .cart-item {
-    height: 120px;
+    height: 100px;
     width: 100%;
     overflow: hidden;
     border-top: 1px solid #f0f0f0;
@@ -723,24 +707,6 @@ export default {
     height: 35px;
     transition: unset;
     color: #8500ff;
-  }
-
-  @media (max-height: 780px) {
-    .nav-cart-items {
-      max-height: 423px !important;
-    }
-  }
-
-  @media (max-height: 900px) {
-    .nav-cart-items {
-      max-height: 544px !important;
-    }
-  }
-
-  @media (max-height: 1080px) {
-    .nav-cart-items {
-      max-height: 620px !important;
-    }
   }
 
   .nav-sub {
@@ -803,25 +769,20 @@ export default {
   }
 
   .cart-con {
-    /*display: flex;*/
-    text-align: center;
-    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 150px;
 
+    div{
+      font-size: 40px;
+    }
     p {
-      padding-top: 185px;
-      color: #333333;
+      color: #5a5a5a;
       font-size: 16px;
+      margin-left: 10px;
+      text-shadow: $text-shadow;
     }
   }
 
-  .cart-con:before {
-    position: absolute;
-    content: " ";
-    left: 50%;
-    transform: translate(-50%, -70%);
-    top: 50%;
-    width: 76px;
-    height: 62px;
-    background-size: cover;
-  }
 </style>

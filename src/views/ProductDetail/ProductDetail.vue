@@ -68,7 +68,7 @@
             </strong>
           </span>
           <el-button class="buy" icon="el-icon-if icon-buy-icon">立即购买</el-button>
-          <el-button class="cart" icon="el-icon-if icon-Cart">加入购物车</el-button>
+          <el-button class="cart" icon="el-icon-if icon-Cart" @click="addCart">加入购物车</el-button>
         </div>
       </div>
     </footer>
@@ -78,6 +78,8 @@
 </template>
 
 <script>
+import { getStore } from '@/utils/storage';
+
 export default {
   name: 'ProductDetail',
   data () {
@@ -87,7 +89,9 @@ export default {
       colorList: [],
       imageList: [],
       product: {},
-      smallIndex: 0
+      smallIndex: 0,
+      userId: getStore('userId'),
+      cartList: []
     };
   },
   created () {
@@ -98,10 +102,10 @@ export default {
       { color: '石墨黑' }
     ];
     this.getProductInfo();
+    this.getCart();
   },
   methods: {
     handleChange () {
-
     },
     async getProductInfo () {
       const [err, res] = await this.$http.asyncGet('api/v1.0/getProductInfoById', { id: 4 });
@@ -109,7 +113,41 @@ export default {
         if (res.data.success) {
           this.product = res.data.data.product;
           this.imageList = this.product.imageList;
-          this.bigImage = this.imageList[0];
+        } else {
+          this.$vmessage.error(res.data.msg);
+        }
+      }
+    },
+    // 添加购物车
+    async addCart () {
+      const params = {
+        userId: this.userId,
+        productId: 1,
+        num: this.num
+      };
+      const [err, res] = await this.$http.asyncPost('api/v1.0/check/addCart', params);
+      if (!err && res) {
+        if (res.data.success) {
+          this.$notify({
+            message: '成功添加购物车',
+            type: 'success',
+            offset: 130,
+            customClass: 'cry-notify',
+            duration: 1500
+          });
+          this.getCart();
+        } else {
+          this.$vmessage.error(res.data.msg);
+        }
+      }
+    },
+    // 查询购物车
+    async getCart () {
+      const [err, res] = await this.$http.asyncGet('api/v1.0/check/getCartList', { userId: this.userId });
+      if (!err && res) {
+        if (res.data.success) {
+          this.cartList = res.data.data.cartList;
+          this.$store.commit('mutateCartList', this.cartList);
         } else {
           this.$vmessage.error(res.data.msg);
         }
@@ -131,6 +169,7 @@ export default {
 
   .info {
     padding-bottom: 100px;
+
     .w {
       display: flex;
       justify-content: space-between;
@@ -276,7 +315,7 @@ export default {
     bottom: 0;
     left: 0;
     width: 100%;
-    z-index: 100;
+    z-index: 20;
     height: 80px;
     background-color: $color-bg;
     box-shadow: 0 -1px 5px $color-shadow;
@@ -309,9 +348,10 @@ export default {
       font-size: 20px;
     }
 
-    .buy{
+    .buy {
       color: #ff6347;
     }
+
     .cart {
       color: #8500ff;
       margin-left: 30px;
@@ -342,9 +382,10 @@ export default {
       box-shadow: 9px 9px 9px rgba(0, 0, 0, 0.06), -9px -9px 9px rgba(255, 255, 255, 0.6),
       inset 5px 5px 5px rgba(0, 0, 0, 0.07), inset -5px -5px 5px rgba(255, 255, 255, 0.7);
 
-      &.is-disabled{
+      &.is-disabled {
         color: #606266;
-        i:before{
+
+        i:before {
           box-shadow: inset 3px 3px 3px rgba(255, 255, 255, 0.5), inset -3px -3px 3px rgba(0, 0, 0, 0.05);
         }
       }
@@ -358,14 +399,16 @@ export default {
       right: -55px;
     }
 
-    ::v-deep i{
+    ::v-deep i {
       line-height: 40px;
       font-weight: bolder;
+
       &:active {
         &:before {
-          box-shadow: inset 3px 3px 3px rgba(0,0,0,0.05), inset -3px -3px 3px rgba(255,255,255,0.5)
+          box-shadow: inset 3px 3px 3px rgba(0, 0, 0, 0.05), inset -3px -3px 3px rgba(255, 255, 255, 0.5)
         }
       }
+
       &:before {
         padding: 10px;
         border-radius: 3px;
@@ -374,4 +417,5 @@ export default {
       }
     }
   }
+
 </style>
