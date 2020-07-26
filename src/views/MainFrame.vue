@@ -1,10 +1,12 @@
 <template>
-  <div>
+  <div id="main-frame">
     <transition name="fade">
-      <cry-header  v-if="isShow"></cry-header>
+      <cry-header v-if="isShow"></cry-header>
     </transition>
     <transition name="fade">
-      <router-view v-if="isShow"></router-view>
+      <div id="router-outer" v-if="isShow">
+        <router-view></router-view>
+      </div>
     </transition>
   </div>
 </template>

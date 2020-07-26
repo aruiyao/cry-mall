@@ -37,7 +37,7 @@
           </div>
           <div class="num">
             <p class="title">数量选择</p>
-            <el-input-number v-model="num" @change="handleChange" :min="1" :max="10"></el-input-number>
+            <el-input-number v-model="num" :min="1" :max="10"></el-input-number>
           </div>
           <div class="after-sale-info">
             <div>
@@ -57,17 +57,17 @@
         <div class="choose-info-box">
           <p class="box-text">您已选择</p>
           <div class="choose-info">
-            <p><strong>{{goods.name}} × 1</strong></p>
-            <p>白色</p>
+            <p><strong>{{goods.name}} × {{num}}</strong></p>
+            <p>{{colorList[selectedIndex].color}}</p>
           </div>
         </div>
         <div class="btn-box">
           <span class="total-price">
             <strong>
-            <i>￥</i>111
+            <i>￥</i>{{totalPrice}}
             </strong>
           </span>
-          <el-button class="buy" icon="el-icon-if icon-buy-icon">立即购买</el-button>
+          <el-button class="buy" icon="el-icon-if icon-buy-icon" @click="buyNow">立即购买</el-button>
           <el-button class="cart" icon="el-icon-if icon-Cart" @click="addCart">加入购物车</el-button>
         </div>
       </div>
@@ -79,6 +79,7 @@
 
 <script>
 import { getStore } from '@/utils/storage';
+import { accMul } from '@/utils/CommonUtil';
 
 export default {
   name: 'GoodsDetail',
@@ -90,8 +91,7 @@ export default {
       imageList: [],
       goods: {},
       smallIndex: 0,
-      userId: getStore('userId'),
-      cartList: []
+      userId: getStore('userId')
     };
   },
   created () {
@@ -102,10 +102,10 @@ export default {
       { color: '石墨黑' }
     ];
     this.getGoodsInfo();
-    this.getCart();
   },
   methods: {
-    handleChange () {
+    buyNow () {
+      this.$router.push('/submitorder');
     },
     async getGoodsInfo () {
       const [err, res] = await this.$http.asyncGet('api/v1.0/getGoodsInfoById', { id: 4 });
@@ -146,8 +146,10 @@ export default {
       const [err, res] = await this.$http.asyncGet('api/v1.0/check/getCartList', { userId: this.userId });
       if (!err && res) {
         if (res.data.success) {
-          this.cartList = res.data.data.cartList;
-          this.$store.commit('mutateCartList', this.cartList);
+          const cartList = res.data.data.cartList;
+          const totalNum = res.data.data.totalNum;
+          this.$store.commit('mutateCartList', cartList);
+          this.$store.commit('mutateCartTotalNum', totalNum);
         } else {
           this.$vmessage.error(res.data.msg);
         }
@@ -159,6 +161,9 @@ export default {
       return function (index) {
         return this.selectedIndex === index ? 'el-icon-if icon-duigou' : '';
       };
+    },
+    totalPrice () {
+      return accMul(this.num, this.goods.price);
     }
   }
 };
@@ -260,7 +265,7 @@ export default {
     }
 
     .selected {
-      box-shadow: inset 1px 1px 2px #BABECC, inset -1px -1px 2px #FFF;
+      box-shadow: inset 2px 2px 2px #BABECC, inset -2px -2px 5px #FFF;
     }
   }
 

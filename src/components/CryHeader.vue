@@ -62,7 +62,7 @@
 
               <!-- 购物车 -->
               <div class="shop pr">
-                <el-badge :value="12" class="item">
+                <el-badge :value="totalNum" class="item">
                   <el-button icon="el-icon-if icon-Cart" class="icon-btn"></el-button>
                 </el-badge>
 
@@ -70,36 +70,36 @@
                 <div class="nav-popup pa el-icon-if">
                   <div class="nav-user-list">
                     <div class="full">
-                      <div class="nav-cart-items">
+                      <div class="nav-cart-items" id="nav-cart-items">
                         <ul>
                           <li class="clearfix" v-for="(cart,index) in cartList" :key="index">
                             <div class="cart-item">
                               <div class="cart-item-inner">
-                                <a>
-                                  <div class="item-thumb">
-                                    <img :src="cart.goods.mainImage">
+                                <div class="item-thumb">
+                                  <img :src="cart.goods.mainImage">
+                                </div>
+                                <div class="item-desc">
+                                  <div class="cart-cell">
+                                    <h4>
+                                      <a href>{{cart.goods.name}}</a>
+                                    </h4>
+                                    <h6>
+                                      <span class="price-icon">¥</span>
+                                      <span class="price-num">{{cart.goods.price}}</span>
+                                      <span class="item-num">x {{cart.num}}</span>
+                                    </h6>
                                   </div>
-                                  <div class="item-desc">
-                                    <div class="cart-cell">
-                                      <h4>
-                                        <a href>{{cart.goods.name}}</a>
-                                      </h4>
-                                      <h6>
-                                        <span class="price-icon">¥</span>
-                                        <span class="price-num">{{cart.goods.price}}</span>
-                                        <span class="item-num">x {{cart.num}}</span>
-                                      </h6>
-                                    </div>
-                                  </div>
-                                </a>
-                                <div class="del-btn del">删除</div>
+                                </div>
+                                <div class="del-btn del">
+                                  <el-button icon="el-icon el-icon-close" @click="deleteCart(cart.id)"></el-button>
+                                </div>
                               </div>
                             </div>
                           </li>
                         </ul>
                       </div>
                       <!-- 总件数 -->
-                      <div class="nav-cart-total">
+                      <div class="nav-cart-total"  @mouseenter="hiddenScroll" @mouseleave="showScroll">
                         <p>
                           共
                           <strong>{{totalNum}}</strong> 件商品
@@ -125,7 +125,7 @@
       </header>
     </div>
     <slot name="nav">
-      <div class="nav-sub" :class="{fixed:isFixed}" :style="`left:-${scrollLeft}px`">
+      <div class="nav-sub" :class="{fixed:isFixed}">
         <div class="nav-sub-wrapper">
           <div class="w">
             <ul class="clearfix">
@@ -141,7 +141,7 @@
 
 <script>
 import { mapState } from 'vuex';
-import { removeStore } from '@/utils/storage';
+import { getStore, removeStore } from '@/utils/storage';
 
 export default {
   name: 'CryHeader',
@@ -150,47 +150,91 @@ export default {
       goodsInfo: '',
       isLogin: false,
       isFixed: false,
-      scrollLeft: ''
+      scrollLeft: '',
+      userId: getStore('userId'),
+      isShow: false
     };
   },
   computed: {
     ...mapState({
-      cartList: state => state.cartList
-    }),
-    totalNum () {
-      return this.cartList.length;
-    },
-    totalPrice () {
-      return (
-        this.cartList &&
-            this.cartList.reduce((total, item) => {
-              total += item.goodsNum * item.salePrice;
-              return total;
-            }, 0)
-      );
-    }
+      cartList: state => state.cartList,
+      totalNum: state => state.cartTotalNum
+    })
   },
   async mounted () {
     this.navFixed();
     window.addEventListener('scroll', this.navFixed);
     window.addEventListener('resize', this.navFixed);
-    window.addEventListener('scroll', this.handleScroll, true); // 监听（绑定）滚轮滚动事件
+    const w1 = document.documentElement.clientWidth;
+    const h = document.getElementsByTagName('html')[0];
+    h.classList.add('fancybox-lock-test');
+    const w2 = document.documentElement.clientWidth;
+    h.classList.remove('fancybox-lock-test');
+    const ele = document.createElement('style');
+    ele.innerHTML = `.fancybox-margin{margin-right:${w2 - w1}px}`;
+    const head = document.getElementsByTagName('head')[0];
+    head.appendChild(ele);
   },
   methods: {
-    handleScroll () {
-      this.scrollLeft = document.documentElement.scrollLeft || document.body.scrollLeft;
-    },
     navFixed () {
       var st = document.documentElement.scrollTop || document.body.scrollTop;
+      this.scrollLeft = document.documentElement.scrollLeft || document.body.scrollLeft;
       st >= 60 ? this.isFixed = true : this.isFixed = false;
     },
     logout () {
       removeStore('token');
       removeStore('buyCart');
       window.location.href = '/';
+    },
+    whellFn (e) {
+      e.preventDefault();
+    },
+    hiddenScroll () {
+      window.addEventListener('wheel', this.whellFn, { passive: false });
+      // const h = document.getElementsByTagName('html')[0];
+      // h.classList.add('fancybox-lock-test');
+      // document.getElementById('main-frame').classList.add('fancybox-margin');
+      // document.getElementById('router-outer').classList.add('fancybox-margin');
+    },
+    showScroll () {
+      window.removeEventListener('wheel', this.whellFn);
+      // const h = document.getElementsByTagName('html')[0];
+      // h.classList.remove('fancybox-lock-test');
+      // document.getElementById('main-frame').classList.remove('fancybox-margin');
+      // document.getElementById('router-outer').classList.add('fancybox-margin');
+    },
+    // 删除购物车
+    async deleteCart (id) {
+      const params = {
+        userId: this.userId,
+        cartIdList: [id]
+      };
+      const [err, res] = await this.$http.asyncPost('api/v1.0/check/deleteCart', params);
+      if (!err && res) {
+        if (res.data.success) {
+          this.getCart();
+        } else {
+          this.$vmessage.error(res.data.msg);
+        }
+      }
+    },
+    // 查询购物车
+    async getCart () {
+      const [err, res] = await this.$http.asyncGet('api/v1.0/check/getCartList', { userId: this.userId });
+      if (!err && res) {
+        if (res.data.success) {
+          const cartList = res.data.data.cartList;
+          const totalNum = res.data.data.totalNum;
+          this.$store.commit('mutateCartList', cartList);
+          this.$store.commit('mutateCartTotalNum', totalNum);
+        } else {
+          this.$vmessage.error(res.data.msg);
+        }
+      }
     }
   },
   created () {
+    this.getCart();
   }
 };
 </script>
@@ -210,7 +254,6 @@ export default {
   }
 
   .f-box {
-    border-bottom: 1px solid #d8d8d8;
     width: 100%;
     top: 0;
     z-index: 1000;
@@ -220,7 +263,8 @@ export default {
   .header-box {
     width: 100%;
     min-width: 1220px;
-    box-shadow: 15px 5px 30px $color-shadow;
+    box-shadow: 0 3px 5px $color-shadow;
+    /*box-shadow: 15px 5px 30px $color-shadow;*/
   }
 
   header {
@@ -564,14 +608,13 @@ export default {
       }
 
       .item-desc {
-        margin-left: 98px;
+        margin-left: 80px;
         display: table;
         width: 205px;
         height: 60px;
 
         h4 {
           color: #000;
-          width: 185px;
           overflow: hidden;
           word-break: keep-all;
           white-space: nowrap;
@@ -603,7 +646,7 @@ export default {
           span {
             display: inline-block;
             font-weight: 700;
-            color: #979797;
+            color: #787878;
           }
 
           .price-icon, .price-num {
@@ -627,12 +670,28 @@ export default {
       }
 
       .del {
-        display: none;
-        overflow: hidden;
         position: absolute;
         right: 20px;
         top: 50%;
+        width: 20px;
+        height: 20px;
+        border-radius: 10px;
         transform: translateY(-50%);
+
+        .el-button {
+          width: 20px;
+          height: 20px;
+          background: $color-bg;
+          transition: none;
+
+          &:hover {
+            box-shadow: -3px -3px 5px #88c0ff, 3px 3px 5px #648ed9;
+          }
+
+          &:active {
+            box-shadow: inset 1px 1px 2px #BABECC, inset -1px -1px 2px #FFF;
+          }
+        }
       }
     }
 
@@ -684,9 +743,11 @@ export default {
     max-height: 50vh;
     overflow-x: hidden;
     overflow-y: auto;
+    overscroll-behavior: contain;
   }
 
   .cart-item {
+    cursor: pointer;
     height: 100px;
     width: 100%;
     overflow: hidden;
@@ -695,8 +756,8 @@ export default {
     &:hover {
       background-color: #76a7ff;
 
-      .del {
-        display: block;
+      .del .el-button {
+        box-shadow: none;
       }
     }
   }
@@ -717,6 +778,7 @@ export default {
     align-items: center;
     justify-content: center;
     background-color: $color-bg;
+    border-top: 1px solid #d8d8d8;
 
     &.fixed {
       position: fixed;
@@ -774,9 +836,10 @@ export default {
     justify-content: center;
     height: 150px;
 
-    div{
+    div {
       font-size: 40px;
     }
+
     p {
       color: #5a5a5a;
       font-size: 16px;

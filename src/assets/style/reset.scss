@@ -16,7 +16,7 @@ html, body, #app {
 }
 
 body {
-  font-family: PingFang SC, Helvetica Neue, Helvetica, Arial, Hiragino Sans GB, Microsoft Yahei, \\5FAE\8F6F\96C5\9ED1, STHeiti, \\534E\6587\7EC6\9ED1, sans-serif;
+  font-family: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;
   color: #666;
   font-size: 14px;
   background-color: $color-bg;
@@ -58,6 +58,9 @@ em {
 .el-icon-if {
   font-size: 14px;
 }
+textarea{
+  font-family: inherit;
+}
 
 input[type=number],
 textarea {
@@ -94,4 +97,8 @@ input[type="reset"] {
   /* Internet Explorer 10+ */
   text-shadow: $text-shadow;
   color: #BEBEBE;
+}
+
+:focus{
+  outline: none;
 }

@@ -8,7 +8,7 @@ const service = axios.create({
   // timeout: 3000
 });
 // service.defaults.withCredentials = true;
-service.defaults.headers['Content-Type'] = 'application/x-www-form-urlencoded';
+// service.defaults.headers['Content-Type'] = 'application/x-www-form-urlencoded';
 
 // 请求拦截器
 service.interceptors.request.use(
@@ -69,7 +69,8 @@ const asyncPost = (url, data, config, errorExt) => {
   const obj = Object.assign({
     url: `${window.projectConfig.url}/${url}`,
     method: 'post',
-    data: qs.stringify(data)
+    data
+    // data: qs.stringify(data)
   }, config);
   return to(service(obj), errorExt);
 };

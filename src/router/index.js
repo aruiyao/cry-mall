@@ -28,10 +28,15 @@ const routes = [
     ]
   },
   {
+    path: '/submitorder',
+    name: 'submitorder',
+    component: () => import('@/views/SubmitOrder/SubmitOrder')
+  },
+  {
     path: '/login',
     name: 'login',
     component: () => import('@/views/Login/Login'),
-    props: (route) => ({ redirectUrl: route.query.redirectUrl })
+    props: route => ({ redirectUrl: route.query.redirectUrl })
   },
   {
     path: '/403',

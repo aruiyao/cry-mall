@@ -8,3 +8,8 @@
   width: $w;
   height: $h;
 }
+
+@mixin hlh($h) {
+  height: $h;
+  line-height: $h;
+}

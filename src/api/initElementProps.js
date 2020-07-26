@@ -5,8 +5,7 @@ Object.assign(ElementUI.Tooltip.props, {
   placement: { default: 'top' }
 });
 Object.assign(ElementUI.Input.props, {
-  clearable: { default: true },
-  size: { default: 'small' }
+  clearable: { default: true }
 });
 Object.assign(ElementUI.Select.props, {
   clearable: { default: true },

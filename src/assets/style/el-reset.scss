@@ -1,12 +1,13 @@
 @import "theme";
 
-.el-button, .el-input__inner {
+.el-button, .el-input__inner, .el-textarea__inner {
   border: 0;
   outline: 0;
   border-radius: 24px;
   background-color: transparent;
 }
-.el-button{
+
+.el-button {
   display: inline-flex;
   justify-content: center;
   align-items: center;
@@ -14,23 +15,24 @@
   width: 200px;
   height: 50px;
 }
-.el-input__inner::-webkit-input-placeholder, textarea::-webkit-input-placeholder {
+
+.el-input__inner::-webkit-input-placeholder, .el-textarea__inner::-webkit-input-placeholder {
   color: #a9a9a9;
 }
 
-.el-input__inner:-moz-placeholder, textarea:-moz-placeholder {
+.el-input__inner:-moz-placeholder, .el-textarea__inner:-moz-placeholder {
   color: #a9a9a9;
 }
 
-.el-input__inner::-moz-placeholder, textarea::-moz-placeholder {
+.el-input__inner::-moz-placeholder, .el-textarea__inner::-moz-placeholder {
   color: #a9a9a9;
 }
 
-.el-input__inner:-ms-input-placeholder, textarea:-ms-input-placeholder {
+.el-input__inner:-ms-input-placeholder, .el-textarea__inner:-ms-input-placeholder {
   color: #a9a9a9;
 }
 
-.el-input__inner {
+.el-input__inner, .el-textarea__inner {
   box-shadow: inset 2px 2px 5px $color-shadow, inset -2px -2px 10px $color-white;
   width: 100%;
   box-sizing: border-box;
@@ -53,7 +55,7 @@
 
 .el-button {
   color: #61677C;
-  box-shadow: -5px -5px 10px $color-white, 5px 5px 20px $color-shadow;
+  box-shadow: -5px -5px 10px $color-white, 5px 5px 10px $color-shadow;
   transition: all 0.2s ease-in-out;
   cursor: pointer;
   font-weight: 600;
@@ -79,4 +81,10 @@
 /*计数器*/
 .el-input-number__decrease, .el-input-number__increase {
   background: transparent;
+}
+
+
+/*drawer*/
+.el-drawer {
+  background-color: $color-bg;
 }

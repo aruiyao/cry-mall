@@ -1,4 +1,7 @@
 module.exports = {
+  outputDir: 'crymall',
+  publicPath: '/crymall',
+  productionSourceMap: false,
   devServer: {
     // https: true,
     port: 8085,

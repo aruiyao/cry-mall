@@ -1,6 +1,6 @@
 <template>
   <div style="height: 100%">
-    <!--        <h1 class="mall-name">CRY Mall</h1>-->
+    <h1 class="mall-name">CRY Mall</h1>
     <div class="login-container">
       <el-form :model="loginForm" :rules="rules" ref="loginForm" label-position="left" label-width="0px">
         <el-form-item prop="userName">
@@ -31,6 +31,7 @@
 
 <script>
 import { setStore } from '@/utils/storage';
+
 export default {
   name: 'Login',
   props: ['redirectUrl'],
@@ -98,6 +99,7 @@ export default {
 
 <style lang="scss" scoped>
   @import "~@/assets/style/theme.scss";
+  @import "~@/assets/style/mixin";
 
   .mall-name {
     font-size: 70px;
@@ -154,5 +156,9 @@ export default {
       color: #F56C6C;
       font-size: 14px;
     }
+  }
+
+  .el-input--medium .el-input__inner {
+    @include hlh(45px)
   }
 </style>

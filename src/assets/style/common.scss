@@ -49,15 +49,14 @@
 
 // 删除按钮
 .del-btn {
-  display: block;
-  cursor: pointer;
-  width: 20px;
-  height: 20px;
-  background-size: 240px 107px;
-  text-indent: -9999em;
+  //display: block;
+  //cursor: pointer;
+  //width: 40px;
+  //height: 20px;
+  //background-size: 240px 107px;
 
   &:hover {
-    background-position: -75px -60px;
+    //background-position: -75px -60px;
   }
 }
 
@@ -92,5 +91,15 @@
     line-height: 24px;
     text-shadow: $text-shadow;
     font-weight: bolder;
+  }
+}
+
+.text-primary{
+  color: #ff6347;
+  &:hover{
+    color: #ff6347;
+  }
+  &:focus{
+    color: #ff6347;
   }
 }
