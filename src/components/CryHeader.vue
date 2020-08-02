@@ -1,12 +1,12 @@
 <template>
 
-  <div class="header-box">
+  <div class="header-box" :class="{fixed:isHboxFixed}">
     <div class="f-box">
       <header class="w">
         <div class="w-box">
           <div class="nav-logo">
             <h1>
-              <!--              <router-link to="/login" title="商城官网" class="to-home">CRY Mall</router-link>-->
+              <!--<router-link to="/login" title="商城官网" class="to-home">CRY Mall</router-link>-->
             </h1>
           </div>
           <div class="right-box">
@@ -72,7 +72,7 @@
                     <div class="full">
                       <div class="nav-cart-items" id="nav-cart-items">
                         <ul>
-                          <li class="clearfix" v-for="(cart,index) in cartList" :key="index">
+                          <li class="clearfix" v-for="(cart,index) in cartList" :key="index" @click="goToSubmit(cart)">
                             <div class="cart-item">
                               <div class="cart-item-inner">
                                 <div class="item-thumb">
@@ -80,9 +80,7 @@
                                 </div>
                                 <div class="item-desc">
                                   <div class="cart-cell">
-                                    <h4>
-                                      <a href>{{cart.goods.name}}</a>
-                                    </h4>
+                                    <h4>{{cart.goods.name}}</h4>
                                     <h6>
                                       <span class="price-icon">¥</span>
                                       <span class="price-num">{{cart.goods.price}}</span>
@@ -90,8 +88,8 @@
                                     </h6>
                                   </div>
                                 </div>
-                                <div class="del-btn del">
-                                  <el-button icon="el-icon el-icon-close" @click="deleteCart(cart.id)"></el-button>
+                                <div class="del">
+                                  <el-button icon="el-icon el-icon-close" @click.stop="deleteCart(cart.id)"></el-button>
                                 </div>
                               </div>
                             </div>
@@ -99,13 +97,13 @@
                         </ul>
                       </div>
                       <!-- 总件数 -->
-                      <div class="nav-cart-total"  @mouseenter="hiddenScroll" @mouseleave="showScroll">
+                      <div class="nav-cart-total" @mouseenter="hiddenScroll" @mouseleave="showScroll">
                         <p>
                           共
                           <strong>{{totalNum}}</strong> 件商品
                         </p>
                         <h6>
-                          <el-button class="popup-cart">
+                          <el-button class="popup-cart" @click="$router.push('/cart')">
                             <i class="el-icon-if icon-Cart"></i>
                             <span>去购物车</span>
                           </el-button>
@@ -150,6 +148,7 @@ export default {
       goodsInfo: '',
       isLogin: false,
       isFixed: false,
+      isHboxFixed: false,
       scrollLeft: '',
       userId: getStore('userId'),
       isShow: false
@@ -157,29 +156,34 @@ export default {
   },
   computed: {
     ...mapState({
-      cartList: state => state.cartList,
-      totalNum: state => state.cartTotalNum
+      cartList: state => state.cart.cartList,
+      totalNum: state => state.cart.cartTotalNum
     })
   },
   async mounted () {
-    this.navFixed();
-    window.addEventListener('scroll', this.navFixed);
-    window.addEventListener('resize', this.navFixed);
-    const w1 = document.documentElement.clientWidth;
-    const h = document.getElementsByTagName('html')[0];
-    h.classList.add('fancybox-lock-test');
-    const w2 = document.documentElement.clientWidth;
-    h.classList.remove('fancybox-lock-test');
-    const ele = document.createElement('style');
-    ele.innerHTML = `.fancybox-margin{margin-right:${w2 - w1}px}`;
-    const head = document.getElementsByTagName('head')[0];
-    head.appendChild(ele);
+    const ns = document.getElementsByClassName('nav-sub').length;
+    if (ns > 0) {
+      this.navFixed();
+      window.addEventListener('scroll', this.navFixed);
+      window.addEventListener('resize', this.navFixed);
+    } else {
+      this.isHboxFixed = true;
+    }
+    // const w1 = document.documentElement.clientWidth;
+    // const h = document.getElementsByTagName('html')[0];
+    // h.classList.add('fancybox-lock-test');
+    // const w2 = document.documentElement.clientWidth;
+    // h.classList.remove('fancybox-lock-test');
+    // const ele = document.createElement('style');
+    // ele.innerHTML = `.fancybox-margin{margin-right:${w2 - w1}px}`;
+    // const head = document.getElementsByTagName('head')[0];
+    // head.appendChild(ele);
   },
   methods: {
     navFixed () {
-      var st = document.documentElement.scrollTop || document.body.scrollTop;
+      const st = document.documentElement.scrollTop || document.body.scrollTop;
       this.scrollLeft = document.documentElement.scrollLeft || document.body.scrollLeft;
-      st >= 60 ? this.isFixed = true : this.isFixed = false;
+      this.isFixed = st >= 60;
     },
     logout () {
       removeStore('token');
@@ -202,6 +206,14 @@ export default {
       // h.classList.remove('fancybox-lock-test');
       // document.getElementById('main-frame').classList.remove('fancybox-margin');
       // document.getElementById('router-outer').classList.add('fancybox-margin');
+    },
+    goToSubmit (cart) {
+      this.$router.push({
+        name: 'submitorder',
+        query: {
+          goodsId: cart.goodsId
+        }
+      });
     },
     // 删除购物车
     async deleteCart (id) {
@@ -263,8 +275,12 @@ export default {
   .header-box {
     width: 100%;
     min-width: 1220px;
-    box-shadow: 0 3px 5px $color-shadow;
-    /*box-shadow: 15px 5px 30px $color-shadow;*/
+    box-shadow: 1px 1px 6px $color-shadow;
+    &.fixed{
+      position: fixed;
+      top: 0;
+      z-index: 10;
+    }
   }
 
   header {
@@ -585,19 +601,6 @@ export default {
         height: 60px;
         border-radius: 3px;
 
-        &:before {
-          content: "";
-          position: absolute;
-          left: 0;
-          right: 0;
-          top: 0;
-          bottom: 0;
-          z-index: 2;
-          border: 0 solid transparent;
-          box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.06);
-          border-radius: 3px;
-        }
-
         img {
           display: block;
           width: 60px;
@@ -787,6 +790,7 @@ export default {
       left: 0;
       right: 0;
       box-shadow: 1px 1px 6px #BABECC;
+      border: 0;
     }
 
     .nav-sub-wrapper {

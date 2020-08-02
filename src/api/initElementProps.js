@@ -17,6 +17,9 @@ Object.assign(ElementUI.Button.props, {
 Object.assign(ElementUI.Card.props, {
   shadow: { default: 'never' }
 });
+Object.assign(ElementUI.TableColumn.props, {
+  showOverflowTooltip: { default: 'true' }
+});
 Object.assign(ElementUI.Dialog.props, {
   closeOnClickModal: { default: false },
   modalAppendToBody: { default: false },

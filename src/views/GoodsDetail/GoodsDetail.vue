@@ -163,7 +163,11 @@ export default {
       };
     },
     totalPrice () {
-      return accMul(this.num, this.goods.price);
+      if (this.goods.price) {
+        return accMul(this.num, this.goods.price);
+      } else {
+        return '';
+      }
     }
   }
 };
@@ -274,14 +278,6 @@ export default {
     justify-content: center;
   }
 
-  .el-input-number {
-    width: 100px;
-
-    ::v-deep .el-input__inner {
-      border-radius: 5px;
-    }
-  }
-
   .price {
     display: flex;
     font-size: 18px;
@@ -376,9 +372,11 @@ export default {
 
   .el-input-number {
     margin-left: 60px;
+    width: 100px;
 
     ::v-deep .el-input__inner {
       padding: 0;
+      border-radius: 5px;
     }
 
     ::v-deep .el-input-number__decrease, ::v-deep .el-input-number__increase {

@@ -22,60 +22,65 @@ export const accDiv = (arg1, arg2) => {
 // 说明：javascript的乘法结果会有误差，在两个浮点数相乘的时候会比较明显。这个函数返回较为精确的乘法结果。
 // 调用：accMul(arg1,arg2)
 // 返回值：arg1乘以arg2的精确结果
-export const accMul = (arg1, arg2) => {
+export const accMul = (...args) => {
   let m = 0;
-  const s1 = arg1.toString();
-  const s2 = arg2.toString();
-  try {
-    m += s1.split('.')[1].length;
-  } catch (e) {
+  let results = 1;
+  for (const item of args) {
+    try {
+      m += item.toString().split('.')[1].length;
+    } catch (e) {
+    }
   }
-  try {
-    m += s2.split('.')[1].length;
-  } catch (e) {
+  for (const arg of args) {
+    try {
+      results *= Number(arg.toString().replace('.', ''));
+    } catch (e) {
+    }
   }
-  return Number(s1.replace('.', '')) * Number(s2.replace('.', '')) / Math.pow(10, m);
+  return results / Math.pow(10, m);
 };
 
 // 加法函数，用来得到精确的加法结果
 // 说明：javascript的加法结果会有误差，在两个浮点数相加的时候会比较明显。这个函数返回较为精确的加法结果。
 // 调用：accAdd(arg1,arg2)
 // 返回值：arg1加上arg2的精确结果
-export const accAdd = (arg1, arg2) => {
-  let r1, r2;
-  try {
-    r1 = arg1.toString().split('.')[1].length;
-  } catch (e) {
-    r1 = 0;
+export const accAdd = (...args) => {
+  const list = [];
+  for (const item of args) {
+    let r = 0;
+    try {
+      r = item.toString().split('.')[1].length;
+    } catch (e) {
+      r = 0;
+    }
+    list.push(r);
   }
-  try {
-    r2 = arg2.toString().split('.')[1].length;
-  } catch (e) {
-    r2 = 0;
+  const m = Math.pow(10, Math.max.apply(null, list));
+  let result = 0;
+  for (const arg of args) {
+    result += accMul(arg, m);
   }
-  const m = Math.pow(10, Math.max(r1, r2));
-  return (arg1 * m + arg2 * m) / m;
+  return result / m;
 };
 
 // 减法函数，用来得到精确的减法结果
 // 说明：javascript的加法结果会有误差，在两个浮点数相加的时候会比较明显。这个函数返回较为精确的加法结果。
 // 调用：accAdd(arg1,arg2)
-// 返回值：arg1加上arg2的精确结果
-export const accSub = (arg1, arg2) => {
-  let r1, r2;
-  try {
-    r1 = arg1.toString().split('.')[1].length;
-  } catch (e) {
-    r1 = 0;
+// 返回值：arg1减arg2的精确结果
+export const accSub = (...args) => {
+  const list = [];
+  for (const item of args) {
+    let r = 0;
+    try {
+      r = item.toString().split('.')[1].length;
+    } catch (e) {
+      r = 0;
+    }
+    list.push(r);
   }
-  try {
-    r2 = arg2.toString().split('.')[1].length;
-  } catch (e) {
-    r2 = 0;
-  }
-  const m = Math.pow(10, Math.max(r1, r2));
-  // last modify by deeka
-  // 动态控制精度长度
-  const n = (r1 >= r2) ? r1 : r2;
-  return ((arg1 * m - arg2 * m) / m).toFixed(n);
+  const m = Math.pow(10, Math.max.apply(null, list));
+  const result = args.reduce((pre, cur) => {
+    return accMul(pre, m) - accMul(cur, m);
+  });
+  return result / m;
 };

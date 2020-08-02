@@ -88,3 +88,17 @@
 .el-drawer {
   background-color: $color-bg;
 }
+
+/*table*/
+.el-table, .el-table__expanded-cell{
+  background-color: transparent;
+}
+.el-table th, .el-table tr{
+  background-color: transparent;
+}
+.el-table td, .el-table th.is-leaf{
+  border-bottom: 1px solid #f3f6ff;
+}
+.el-table--enable-row-hover .el-table__body tr:hover>td{
+  background-color: transparent;
+}
