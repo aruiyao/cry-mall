@@ -47,10 +47,16 @@
         </el-table-column>
       </el-table>
       <div class="settle-box">
-        <span>共 4 件商品，已选择 0件</span>
+        <div>共
+          <span style="color: rgb(255, 103, 0);font-weight: bolder;">{{cartList.length}}</span>
+          件商品，已选择
+          <span style="color: rgb(255, 103, 0);font-weight: bolder">{{checkedNum}}</span>
+          件
+        </div>
         <div>
-          <span>合计：{{totalPrice}}元</span>
-          <el-button>去结算</el-button>
+          <span>合 计：</span>
+          <span class="cart-total">{{totalPrice}}</span> 元
+          <el-button id="submit" @click="toSubmit">去结算</el-button>
         </div>
       </div>
     </div>
@@ -95,6 +101,11 @@ export default {
       } else {
         return 0;
       }
+    },
+    checkedNum () {
+      let checkedList = [];
+      checkedList = this.cartList.filter(item => item.isChecked);
+      return checkedList.length;
     }
   },
   created () {
@@ -162,6 +173,9 @@ export default {
           this.$vmessage.error(res.data.msg);
         }
       }
+    },
+    toSubmit () {
+      this.$router.push('/submitorder');
     }
   },
   watch: {
@@ -256,6 +270,7 @@ export default {
     padding: 0 40px;
     margin-top: 20px;
     box-shadow: $box-shadow;
+    letter-spacing: 1px;
   }
 
   .settle-box .el-button {
@@ -263,13 +278,20 @@ export default {
     height: 40px;
     margin-left: 40px;
   }
-  ::v-deep .operation{
-    .cell{
+
+  ::v-deep .operation {
+    .cell {
       overflow: unset;
     }
-    .el-button{
+
+    .el-button {
       width: 20px;
       height: 20px;
     }
+  }
+
+  .cart-total {
+    color: rgb(255, 103, 0);
+    font-size: 30px;
   }
 </style>

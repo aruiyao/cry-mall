@@ -33,13 +33,11 @@ export default {
   methods: {
     ...mapMutations(['ADDCART']),
     goodsDetail (id) {
-      // 编程式导航
-      this.$router.push({
-        name: 'goodsDetail',
-        query: {
-          goodsId: id
-        }
+      const { href } = this.$router.resolve({
+        name: 'goodsdetail',
+        query: { id: id }
       });
+      window.open(href, '_blank');
     },
     addCart (id, price, name, img) {
       if (this.login) {

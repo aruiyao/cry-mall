@@ -105,10 +105,16 @@ export default {
   },
   methods: {
     buyNow () {
-      this.$router.push('/submitorder');
+      this.$router.push({
+        name: 'submitorder',
+        query: {
+          goodsId: this.goods.id,
+          num: this.num
+        }
+      });
     },
     async getGoodsInfo () {
-      const [err, res] = await this.$http.asyncGet('api/v1.0/getGoodsInfoById', { id: 4 });
+      const [err, res] = await this.$http.asyncGet('api/v1.0/getGoodsInfoById', { id: this.$route.query.id });
       if (!err && res) {
         if (res.data.success) {
           this.goods = res.data.data.goods;

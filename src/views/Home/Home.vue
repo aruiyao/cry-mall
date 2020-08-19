@@ -5,7 +5,7 @@
       <div class="bg" ref="bg">
         <transition-group tag="div" name="fade">
           <div v-for="(item, i) in bannerList" v-show="i===mark" :key="item.id" style="position:absolute"
-               @click="linkTo(item)" @mouseover="stopTimer" @mouseout="startTimer">
+               @click="linkTo(item.goodsId)" @mouseover="stopTimer" @mouseout="startTimer">
             <img :src="item.url"/>
           </div>
         </transition-group>
@@ -21,7 +21,7 @@
       <!-- 仅仅要活动版块的内容 -->
       <el-row type="flex" justify="space-between">
         <el-col class="content" :span="6" v-for="promotion in promotionList" :key="promotion.id">
-          <el-card :body-style="{ padding: '0px' }">
+          <el-card :body-style="{ padding: '0px' }" @click.native="linkTo(promotion.id)">
             <img v-lazy="promotion.mainImage">
             <a href="javascript:void(0)" class="cover-link"></a>
           </el-card>
@@ -146,8 +146,11 @@ export default {
     stopTimer () {
       clearInterval(this.timer);
     },
-    linkTo () {
-      const { href } = this.$router.resolve('/goodsdetail');
+    linkTo (id) {
+      const { href } = this.$router.resolve({
+        name: 'goodsdetail',
+        query: { id: id }
+      });
       window.open(href, '_blank');
     }
   }
@@ -253,19 +256,12 @@ export default {
 
   .content {
     position: relative;
+    height: 164px;
 
-    &:first-of-type {
-      .el-card {
-        border-radius: 4px 0 0 4px;
-      }
+    ::v-deep .el-card__body, .el-card, img {
+      height: 100%;
     }
 
-    &:last-of-type {
-      .el-card {
-        border-radius: 0 4px 4px 0;
-        border: none;
-      }
-    }
   }
 
   .cover-link {

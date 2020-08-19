@@ -86,13 +86,58 @@
       <div class="buy-list-box">
         <p class="title">购物清单</p>
       </div>
+
+      <el-table
+          :data="buyList"
+          tooltip-effect="dark"
+          style="width: 100%"
+      >
+        <el-table-column class-name="goods-image" width="130">
+          <template slot-scope="scope">
+            <img :src="scope.row.goods.mainImage">
+          </template>
+        </el-table-column>
+        <el-table-column label="商品名称" width="380">
+          <template slot-scope="scope">
+            <span class="goods-name">{{ scope.row.goods.name }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="单价">
+          <template slot-scope="scope">
+            <span style="font-size: 16px;">{{ scope.row.goods.price }}元</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="数量">
+          <template slot-scope="scope">
+            {{ scope.row.num }}
+          </template>
+        </el-table-column>
+        <el-table-column label="小计">
+          <template slot-scope="scope">
+            <span
+                style="color: #ff6700;font-size: 16px;">{{ selfMul(scope.row.goods.price, scope.row.num) }}元</span>
+          </template>
+        </el-table-column>
+      </el-table>
+
+      <div class="settle-box">
+        <div>
+        </div>
+        <div>
+          <span>合 计：</span>
+          <span class="cart-total">{{totalPrice}}</span> 元
+          <el-button id="submit">立即下单</el-button>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+import { mapState } from 'vuex';
 import CryHeader from '@/components/CryHeader';
 import { getStore } from '@/utils/storage';
+import { accAdd, accMul } from '@/utils/CommonUtil';
 
 export default {
   name: 'SubmitOrder',
@@ -101,6 +146,8 @@ export default {
   },
   data () {
     return {
+      goodsId: this.$route.query.goodsId,
+      num: this.$route.query.num,
       selectedAddress: 0,
       userId: getStore('userId'),
       addDrawer: false,
@@ -122,13 +169,51 @@ export default {
         tel: { required: true, message: '请输入手机号码', trigger: 'blur' },
         deliveryAddress: { required: true, message: '请输入收货地址', trigger: 'blur' }
       },
-      addressList: []
+      addressList: [],
+      buyList: []
     };
   },
   created () {
     this.getDeliveryAddressList();
+    if (this.goodsId !== undefined && this.num !== undefined) {
+      this.getGoodsInfo();
+    } else {
+      this.buyList = this.cartList.filter(item => item.isChecked === 1);
+    }
+  },
+  computed: {
+    ...mapState({
+      cartList: state => state.cart.cartList
+    }),
+    totalPrice () {
+      if (this.buyList.length > 0) {
+        return this.buyList.reduce((pre, cur) => {
+          const curPrice = accMul(cur.goods.price, cur.num);
+          return accAdd(pre, curPrice);
+        }, 0);
+      } else {
+        return 0;
+      }
+    }
   },
   methods: {
+    selfMul () {
+      return accMul(...arguments);
+    },
+    async getGoodsInfo () {
+      const [err, res] = await this.$http.asyncGet('api/v1.0/getGoodsInfoById', { id: this.goodsId });
+      if (!err && res) {
+        if (res.data.success) {
+          const buyListItem = {
+            goods: res.data.data.goods,
+            num: this.num
+          };
+          this.buyList = [buyListItem];
+        } else {
+          this.$vmessage.error(res.data.msg);
+        }
+      }
+    },
     chooseAddress (index) {
       this.selectedAddress = index;
     },
@@ -138,6 +223,7 @@ export default {
     clearValidate (formName) {
       this.$refs[formName].clearValidate();
     },
+    // 查询收货地址
     async getDeliveryAddressList () {
       const [err, res] = await this.$http.asyncGet('api/v1.0/check/getDeliveryAddressList', { userId: this.userId });
       if (!err && res) {
@@ -390,7 +476,46 @@ export default {
     }
   }
 
-  .buy-list-box{
+  .buy-list-box {
     margin-top: 20px;
+  }
+
+  .goods-image img {
+    width: 80px;
+    height: 80px;
+  }
+
+  .settle-box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 80px;
+    border-radius: 10px;
+    padding: 0 40px;
+    margin-top: 20px;
+    box-shadow: $box-shadow;
+    letter-spacing: 1px;
+  }
+
+  .settle-box .el-button {
+    width: 150px;
+    height: 40px;
+    margin-left: 40px;
+  }
+
+  ::v-deep .operation {
+    .cell {
+      overflow: unset;
+    }
+
+    .el-button {
+      width: 20px;
+      height: 20px;
+    }
+  }
+
+  .cart-total {
+    color: rgb(255, 103, 0);
+    font-size: 30px;
   }
 </style>
