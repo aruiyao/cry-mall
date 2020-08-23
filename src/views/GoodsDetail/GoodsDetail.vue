@@ -51,6 +51,7 @@
           </div>
         </div>
       </div>
+      <div class="detail-img"></div>
     </div>
     <footer>
       <div class="w">
@@ -72,7 +73,6 @@
         </div>
       </div>
     </footer>
-    <div class="detail-img"></div>
 
   </div>
 </template>
@@ -178,7 +178,6 @@ export default {
   }
 };
 </script>
-
 <style lang="scss" scoped>
   @import "~@/assets/style/theme.scss";
 
@@ -376,6 +375,7 @@ export default {
     }
   }
 
+  // 计数器
   .el-input-number {
     margin-left: 60px;
     width: 100px;
@@ -426,5 +426,9 @@ export default {
       }
     }
   }
-
+</style>
+<style>
+  .header-box + div {
+    padding-bottom: 0;
+  }
 </style>

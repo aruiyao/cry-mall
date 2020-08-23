@@ -38,7 +38,7 @@
                         <p class="name">121212</p>
                       </li>
                       <li>
-                        <router-link to="/user/orderList">我的订单</router-link>
+                        <router-link to="/usercenter/myorder">我的订单</router-link>
                       </li>
                       <li>
                         <router-link to="/user/information">账号资料</router-link>

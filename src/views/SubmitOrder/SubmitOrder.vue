@@ -72,7 +72,7 @@
             <div class="options">
               <a @click.stop="handelModify(address)">修改</a>
               <a @click.stop="deleteDeliveryAddress(address)">删除</a>
-              <a @click.stop="setDefault(address)">设为默认</a>
+              <!--              <a @click.stop="setDefault(address)">设为默认</a>-->
             </div>
           </el-card>
           <el-card class="add-box" @click.native="addDrawer=true">
@@ -126,7 +126,7 @@
         <div>
           <span>合 计：</span>
           <span class="cart-total">{{totalPrice}}</span> 元
-          <el-button id="submit">立即下单</el-button>
+          <el-button id="submit" @click="submitOrder">立即下单</el-button>
         </div>
       </div>
     </div>
@@ -170,15 +170,22 @@ export default {
         deliveryAddress: { required: true, message: '请输入收货地址', trigger: 'blur' }
       },
       addressList: [],
-      buyList: []
+      buyList: [],
+      address: {},
+      aa: []
     };
   },
   created () {
     this.getDeliveryAddressList();
     if (this.goodsId !== undefined && this.num !== undefined) {
       this.getGoodsInfo();
-    } else {
-      this.buyList = this.cartList.filter(item => item.isChecked === 1);
+    }
+  },
+  watch: {
+    cartList () {
+      if (this.goodsId === undefined || this.num === undefined) {
+        this.buyList = this.cartList.filter(item => item.isChecked === 1);
+      }
     }
   },
   computed: {
@@ -215,6 +222,7 @@ export default {
       }
     },
     chooseAddress (index) {
+      this.address = this.addressList[index];
       this.selectedAddress = index;
     },
     resetFields (formName) {
@@ -229,6 +237,7 @@ export default {
       if (!err && res) {
         if (res.data.success) {
           this.addressList = res.data.data.deliveryAddressList;
+          this.address = this.addressList[0];
         } else {
           this.$vmessage.error(res.data.msg);
         }
@@ -290,20 +299,20 @@ export default {
       this.modifyDrawer = false;
       this.clearValidate('modifyAddressForm');
     },
-    async setDefault (address) {
-      const params = {
-        id: address.id,
-        isDefault: 1
-      };
-      const [err, res] = await this.$http.asyncPost('api/v1.0/check/updateDeliveryAddress', params);
-      if (!err && res) {
-        if (res.data.success) {
-          this.getDeliveryAddressList();
-        } else {
-          this.$vmessage.error(res.data.msg);
-        }
-      }
-    },
+    // async setDefault (address) {
+    //   const params = {
+    //     id: address.id,
+    //     isDefault: 1
+    //   };
+    //   const [err, res] = await this.$http.asyncPost('api/v1.0/check/updateDeliveryAddress', params);
+    //   if (!err && res) {
+    //     if (res.data.success) {
+    //       this.getDeliveryAddressList();
+    //     } else {
+    //       this.$vmessage.error(res.data.msg);
+    //     }
+    //   }
+    // },
     // 删除收货地址
     async deleteDeliveryAddress (address) {
       const [err, res] = await this.$http.asyncPost('api/v1.0/check/deleteDeliveryAddress', address);
@@ -311,6 +320,22 @@ export default {
         if (res.data.success) {
           this.$vmessage.success('删除成功');
           this.getDeliveryAddressList();
+        } else {
+          this.$vmessage.error(res.data.msg);
+        }
+      }
+    },
+    async submitOrder () {
+      const params = {
+        bls: this.buyList,
+        userId: this.userId,
+        amount: this.totalPrice,
+        addr: this.address,
+        status: 0
+      };
+      const [err, res] = await this.$http.asyncPost('api/v1.0/check/addOrder', params);
+      if (!err && res) {
+        if (res.data.success) {
         } else {
           this.$vmessage.error(res.data.msg);
         }
@@ -385,7 +410,7 @@ export default {
         right: -50px;
         text-align: right;
         font-size: 12px;
-        height: 60px;
+        height: 40px;
         transition: right 0.5s ease-in-out;
       }
 

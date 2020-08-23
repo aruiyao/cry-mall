@@ -4,9 +4,9 @@
       <cry-header v-if="isShow"></cry-header>
     </transition>
     <transition name="fade">
-      <div id="router-outer" v-if="isShow">
+      <template id="router-outer" v-if="isShow">
         <router-view></router-view>
-      </div>
+      </template>
     </transition>
   </div>
 </template>

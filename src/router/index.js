@@ -24,6 +24,18 @@ const routes = [
         path: 'goodsdetail',
         name: 'goodsdetail',
         component: () => import('@/views/GoodsDetail/GoodsDetail')
+      },
+      {
+        path: 'usercenter',
+        name: 'usercenter',
+        component: () => import('@/views/UserCenter/index'),
+        children: [
+          {
+            path: 'myorder',
+            name: 'myorder',
+            component: () => import('@/views/UserCenter/OrderManage/OrderList')
+          }
+        ]
       }
     ]
   },
