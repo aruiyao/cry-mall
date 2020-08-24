@@ -31,7 +31,12 @@ router.beforeEach(async (to, from, next) => {
       const isLogin = res.data.data.isLogin;
       if (to.meta.needLogin) {
         if (!isLogin) {
-          next({ path: '/login' });
+          next({
+            name: 'login',
+            query: {
+              redirectUrl: from.fullPath
+            }
+          });
         } else {
           next();
         }

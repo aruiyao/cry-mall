@@ -13,17 +13,26 @@ const routes = [
       {
         path: 'home',
         name: 'Home',
-        component: () => import('@/views/Home/Home')
+        component: () => import('@/views/Home/Home'),
+        meta: {
+          needLogin: false
+        }
       },
       {
         path: 'user',
         name: 'user',
-        component: () => import('@/views/User/User')
+        component: () => import('@/views/User/User'),
+        meta: {
+          needLogin: true
+        }
       },
       {
         path: 'goodsdetail',
         name: 'goodsdetail',
-        component: () => import('@/views/GoodsDetail/GoodsDetail')
+        component: () => import('@/views/GoodsDetail/GoodsDetail'),
+        meta: {
+          needLogin: false
+        }
       },
       {
         path: 'usercenter',
@@ -33,7 +42,10 @@ const routes = [
           {
             path: 'myorder',
             name: 'myorder',
-            component: () => import('@/views/UserCenter/OrderManage/OrderList')
+            component: () => import('@/views/UserCenter/OrderManage/OrderList'),
+            meta: {
+              needLogin: true
+            }
           }
         ]
       }
@@ -42,18 +54,27 @@ const routes = [
   {
     path: '/submitorder',
     name: 'submitorder',
-    component: () => import('@/views/SubmitOrder/SubmitOrder')
+    component: () => import('@/views/SubmitOrder/SubmitOrder'),
+    meta: {
+      needLogin: true
+    }
   },
   {
     path: '/cart',
     name: 'cart',
-    component: () => import('@/views/Cart/Cart')
+    component: () => import('@/views/Cart/Cart'),
+    meta: {
+      needLogin: true
+    }
   },
   {
     path: '/login',
     name: 'login',
     component: () => import('@/views/Login/Login'),
-    props: route => ({ redirectUrl: route.query.redirectUrl })
+    props: route => ({ redirectUrl: route.query.redirectUrl }),
+    meta: {
+      needLogin: false
+    }
   },
   {
     path: '/403',

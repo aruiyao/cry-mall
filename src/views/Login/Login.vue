@@ -75,7 +75,7 @@ export default {
               setStore('token', res.data.data.token);
               setStore('userId', res.data.data.userId);
               if (this.redirectUrl) {
-                window.location.href = this.redirectUrl;
+                this.$router.push(this.redirectUrl);
               } else {
                 this.$router.push('/home');
               }

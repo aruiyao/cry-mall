@@ -53,7 +53,7 @@
                         <router-link to="/user/coupon">我的优惠</router-link>
                       </li>
                       <li>
-                        <a href="" @click="logout">退出</a>
+                        <a @click="logout">退出</a>
                       </li>
                     </ul>
                   </div>
@@ -62,12 +62,12 @@
 
               <!-- 购物车 -->
               <div class="shop pr">
-                <el-badge :value="totalNum" class="item">
-                  <el-button icon="el-icon-if icon-Cart" class="icon-btn"></el-button>
+                <el-badge :value="totalNum" class="item" :hidden="userId===null">
+                  <el-button icon="el-icon-if icon-Cart" class="icon-btn" @click="$router.push('/cart')"></el-button>
                 </el-badge>
 
                 <!-- 购物车显示 -->
-                <div class="nav-popup pa el-icon-if">
+                <div class="nav-popup pa el-icon-if" v-if="userId!==null">
                   <div class="nav-user-list">
                     <div class="full">
                       <div class="nav-cart-items" id="nav-cart-items">
@@ -139,7 +139,7 @@
 
 <script>
 import { mapState } from 'vuex';
-import { getStore, removeStore } from '@/utils/storage';
+import { getStore } from '@/utils/storage';
 
 export default {
   name: 'CryHeader',
@@ -186,9 +186,8 @@ export default {
       this.isFixed = st >= 60;
     },
     logout () {
-      removeStore('token');
-      removeStore('buyCart');
-      window.location.href = '/';
+      localStorage.clear();
+      this.$router.push('/login');
     },
     whellFn (e) {
       e.preventDefault();
@@ -246,7 +245,9 @@ export default {
     }
   },
   created () {
-    this.getCart();
+    if (this.userId){
+      this.getCart();
+    }
   }
 };
 </script>

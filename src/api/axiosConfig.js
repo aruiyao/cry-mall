@@ -32,7 +32,7 @@ service.interceptors.response.use(
       router.push({
         name: 'login',
         query: {
-          redirectUrl: location.href
+          redirectUrl: router.currentRoute.fullPath
         }
       });
     }
