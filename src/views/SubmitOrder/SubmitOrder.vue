@@ -19,7 +19,7 @@
             <el-input type="textarea" v-model="addAddressForm.deliveryAddress" placeholder="收货地址" rows="4"></el-input>
           </el-form-item>
           <el-form-item style="margin-top: 25px;margin-bottom: 15px;">
-            <el-button id="add" class="text-primary" @click="addDeliveryAddress">确认</el-button>
+            <el-button id="add" type="primary" @click="addDeliveryAddress">确认</el-button>
           </el-form-item>
           <el-form-item>
             <el-button @click="closeAddAddr">关闭</el-button>
@@ -47,7 +47,7 @@
                       rows="4"></el-input>
           </el-form-item>
           <el-form-item style="margin-top: 25px;margin-bottom: 15px;">
-            <el-button id="modify" class="text-primary" @click="updateDeliveryAddress">确认</el-button>
+            <el-button id="modify" type="primary" @click="updateDeliveryAddress">确认</el-button>
           </el-form-item>
           <el-form-item>
             <el-button @click="closeModifyAddr">关闭</el-button>
@@ -62,17 +62,23 @@
     </cry-header>
     <div class="w">
       <div class="address-box">
-        <p class="title">收货地址</p>
+        <div class="title-box">
+          <p class="title">收货地址</p>
+          <el-link type="primary" :underline="false" @click="$router.push('/usercenter/addressmanage')">管理收货地址</el-link>
+        </div>
         <div class="address-content">
           <el-card v-for="(address,index) in addressList" :key="address.id" @click.native="chooseAddress(index)"
                    :class="{'selected':selectedAddress===index}">
-            <p class="consignee">{{address.name}}</p>
+            <div class="default-address" v-if="address.isDefault===1">默认</div>
+            <p class="consignee">
+              <span>{{address.name}}</span>
+            </p>
             <p class="phone">{{address.tel}}</p>
             <p class="address">{{address.deliveryAddress}}</p>
             <div class="options">
               <a @click.stop="handelModify(address)">修改</a>
-              <a @click.stop="deleteDeliveryAddress(address)">删除</a>
-              <!--              <a @click.stop="setDefault(address)">设为默认</a>-->
+              <!-- <a @click.stop="deleteDeliveryAddress(address)">删除</a>-->
+              <a @click.stop="setDefault(address)">设为默认</a>
             </div>
           </el-card>
           <el-card class="add-box" @click.native="addDrawer=true">
@@ -171,8 +177,7 @@ export default {
       },
       addressList: [],
       buyList: [],
-      address: {},
-      aa: []
+      address: {}
     };
   },
   created () {
@@ -299,20 +304,21 @@ export default {
       this.modifyDrawer = false;
       this.clearValidate('modifyAddressForm');
     },
-    // async setDefault (address) {
-    //   const params = {
-    //     id: address.id,
-    //     isDefault: 1
-    //   };
-    //   const [err, res] = await this.$http.asyncPost('api/v1.0/check/updateDeliveryAddress', params);
-    //   if (!err && res) {
-    //     if (res.data.success) {
-    //       this.getDeliveryAddressList();
-    //     } else {
-    //       this.$vmessage.error(res.data.msg);
-    //     }
-    //   }
-    // },
+    async setDefault (address) {
+      const params = {
+        id: address.id,
+        isDefault: 1,
+        userId: this.userId
+      };
+      const [err, res] = await this.$http.asyncPost('api/v1.0/check/updateDefault', params);
+      if (!err && res) {
+        if (res.data.success) {
+          this.getDeliveryAddressList();
+        } else {
+          this.$vmessage.error(res.data.msg);
+        }
+      }
+    },
     // 删除收货地址
     async deleteDeliveryAddress (address) {
       const [err, res] = await this.$http.asyncPost('api/v1.0/check/deleteDeliveryAddress', address);
@@ -326,6 +332,10 @@ export default {
       }
     },
     async submitOrder () {
+      if (!this.address) {
+        this.$vmessage.error('请选择收货地址！');
+        return;
+      }
       const params = {
         bls: this.buyList,
         userId: this.userId,
@@ -347,6 +357,11 @@ export default {
 
 <style lang="scss" scoped>
   @import "~@/assets/style/theme.scss";
+
+  .title-box {
+    display: flex;
+    justify-content: space-between;
+  }
 
   .title {
     color: #000;
@@ -445,102 +460,115 @@ export default {
       }
     }
 
-    .consignee {
-      font-size: 16px;
-      color: #FF9800;
-      font-weight: bolder;
-      letter-spacing: 2px;
-    }
-
-    .phone {
-      margin-top: 15px;
-      font-family: menlo, tahoma, sans-serif;
-      font-size: 17px;
-      letter-spacing: 3px
-    }
-
-    .address {
-      margin-top: 10px;
-      line-height: 1.5;
-      font-size: 13px;
-      letter-spacing: 2px;
-    }
-
-    .add-box.el-card:active {
-      box-shadow: inset 5px 5px 10px rgba(0, 0, 0, 0.2), inset -5px -5px 10px white;
-    }
-
-    .add-box ::v-deep .el-card__body {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .add-inner {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .add-inner p {
-      margin-top: 10px;
-    }
+    .default-address{
+      position: absolute;
+      top: 5px;
+      left: -13px;
+      background: #ffc00f;
+      font-size: 12px;
+      width: 50px;
+      text-align: center;
+      color: #616161;
+      transform: rotateZ(-45deg);
+      letter-spacing: 1px;
+      text-shadow: none;
+  }
+  .consignee {
+    font-size: 16px;
+    color: #FF9800;
+    font-weight: bolder;
+    letter-spacing: 2px;
   }
 
-  .address-form {
-    width: 300px;
-    margin: 0 auto;
-
-    .el-button, ::v-deep .el-input__inner, ::v-deep.el-textarea__inner {
-      border-radius: 10px;
-    }
-
-    .el-button {
-      width: 100%;
-      height: 40px;
-    }
+  .phone {
+    margin-top: 15px;
+    font-family: menlo, tahoma, sans-serif;
+    font-size: 17px;
+    letter-spacing: 3px
   }
 
-  .buy-list-box {
-    margin-top: 20px;
+  .address {
+    margin-top: 10px;
+    line-height: 1.5;
+    font-size: 13px;
+    letter-spacing: 2px;
   }
 
-  .goods-image img {
-    width: 80px;
-    height: 80px;
+  .add-box.el-card:active {
+    box-shadow: inset 5px 5px 10px rgba(0, 0, 0, 0.2), inset -5px -5px 10px white;
   }
 
-  .settle-box {
+  .add-box ::v-deep .el-card__body {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
-    height: 80px;
+  }
+
+  .add-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .add-inner p {
+    margin-top: 10px;
+  }
+}
+
+.address-form {
+  width: 300px;
+  margin: 0 auto;
+
+  .el-button, ::v-deep .el-input__inner, ::v-deep.el-textarea__inner {
     border-radius: 10px;
-    padding: 0 40px;
-    margin-top: 20px;
-    box-shadow: $box-shadow;
-    letter-spacing: 1px;
   }
 
-  .settle-box .el-button {
-    width: 150px;
+  .el-button {
+    width: 100%;
     height: 40px;
-    margin-left: 40px;
+  }
+}
+
+.buy-list-box {
+  margin-top: 20px;
+}
+
+.goods-image img {
+  width: 80px;
+  height: 80px;
+}
+
+.settle-box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 80px;
+  border-radius: 10px;
+  padding: 0 40px;
+  margin-top: 20px;
+  box-shadow: $box-shadow;
+  letter-spacing: 1px;
+}
+
+.settle-box .el-button {
+  width: 150px;
+  height: 40px;
+  margin-left: 40px;
+}
+
+::v-deep .operation {
+  .cell {
+    overflow: unset;
   }
 
-  ::v-deep .operation {
-    .cell {
-      overflow: unset;
-    }
-
-    .el-button {
-      width: 20px;
-      height: 20px;
-    }
+  .el-button {
+    width: 20px;
+    height: 20px;
   }
+}
 
-  .cart-total {
-    color: rgb(255, 103, 0);
-    font-size: 30px;
-  }
+.cart-total {
+  color: rgb(255, 103, 0);
+  font-size: 30px;
+}
 </style>

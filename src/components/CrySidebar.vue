@@ -1,8 +1,8 @@
 <template>
   <div class="side-box">
     <div class="side-title">用户中心</div>
-    <div v-for="(item,index) in menuList" :key="item" @click="chooseMenu(index)"
-         :class="{'selected':selectedIndex===index}" class="side-item"> {{item}}
+    <div v-for="(item,index) in menuList" :key="item.name" @click="chooseMenu(item,index)"
+         :class="{'selected':selectedIndex===index}" class="side-item"> {{item.name}}
     </div>
   </div>
 </template>
@@ -13,12 +13,29 @@ export default {
   data () {
     return {
       selectedIndex: 0,
-      menuList: ['我的订单', '账号资料', '收货地址']
+      menuList: [
+        {
+          name: '我的订单',
+          routerName: 'myorder'
+        },
+        {
+          name: '收货地址',
+          routerName: 'addressmanage'
+        },
+        {
+          name: 'aaa',
+          routerName: 'myoraaader'
+        }
+      ]
     };
   },
+  created () {
+    this.selectedIndex = this.menuList.findIndex(item => item.routerName === this.$route.name);
+  },
   methods: {
-    chooseMenu (index) {
+    chooseMenu (item, index) {
       this.selectedIndex = index;
+      this.$router.push({ name: item.routerName });
     }
   }
 };

@@ -25,7 +25,7 @@
             <div class="nav-aside" :class="{fixed:isFixed}">
               <!-- 用户 -->
               <div class="user pr">
-                <el-button icon="el-icon-user-solid" class="icon-btn" @mouseover.native="isLogin=true"
+                <el-button icon="el-icon-user-solid" type="primary" class="icon-btn" @mouseover.native="isLogin=true"
                            @mouseleave.native="isLogin=false"></el-button>
                 <div class="nav-popup pa el-icon-if">
                   <div class="nav-user-list">
@@ -41,16 +41,16 @@
                         <router-link to="/usercenter/myorder">我的订单</router-link>
                       </li>
                       <li>
-                        <router-link to="/user/information">账号资料</router-link>
+                        <router-link to="/usercenter/information">账号资料</router-link>
                       </li>
                       <li>
-                        <router-link to="/user/addressList">收货地址</router-link>
+                        <router-link to="/usercenter/addressmanage">收货地址</router-link>
                       </li>
                       <li>
-                        <router-link to="/user/support">售后服务</router-link>
+                        <router-link to="/usercenter/support">售后服务</router-link>
                       </li>
                       <li>
-                        <router-link to="/user/coupon">我的优惠</router-link>
+                        <router-link to="/usercenter/coupon">我的优惠</router-link>
                       </li>
                       <li>
                         <a @click="logout">退出</a>
@@ -63,7 +63,7 @@
               <!-- 购物车 -->
               <div class="shop pr">
                 <el-badge :value="totalNum" class="item" :hidden="userId===null">
-                  <el-button icon="el-icon-if icon-Cart" class="icon-btn" @click="$router.push('/cart')"></el-button>
+                  <el-button icon="el-icon-if icon-Cart" type="primary" class="icon-btn" @click="$router.push('/cart')"></el-button>
                 </el-badge>
 
                 <!-- 购物车显示 -->

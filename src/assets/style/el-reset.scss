@@ -16,6 +16,10 @@
   height: 50px;
 }
 
+.el-button [class*=el-icon-] + span {
+  letter-spacing: 1px;
+}
+
 .el-input__inner::-webkit-input-placeholder, .el-textarea__inner::-webkit-input-placeholder {
   color: #a9a9a9;
 }
@@ -77,20 +81,39 @@
     box-shadow: inset 1px 1px 2px $color-shadow, inset -1px -1px 2px $color-white;
   }
 }
-.el-button--primary{
-  color: #ff6700;
+
+.el-button--primary {
+  color: #4bb4fd;
+
   &:hover {
-    color: #ff6700;
+    color: #4bb4fd;
   }
 
   &:focus {
-    color: #ff6700;
+    color: #4bb4fd;
   }
 
   &:active {
-    color: #ff6700;
+    color: #4bb4fd;
   }
 }
+
+.el-button--default {
+  color: #777777;
+
+  &:hover {
+    color: #777777;
+  }
+
+  &:focus {
+    color: #777777;
+  }
+
+  &:active {
+    color: #777777;
+  }
+}
+
 /*计数器*/
 .el-input-number__decrease, .el-input-number__increase {
   background: transparent;
@@ -103,24 +126,33 @@
 }
 
 /*table*/
-.el-table, .el-table__expanded-cell{
+.el-table, .el-table__expanded-cell {
   background-color: transparent;
 }
-.el-table th, .el-table tr{
+
+.el-table th, .el-table tr {
   background-color: transparent;
 }
-.el-table td, .el-table th.is-leaf{
+
+.el-table td, .el-table th.is-leaf {
   border-bottom: 1px solid #f3f6ff;
 }
-.el-table--enable-row-hover .el-table__body tr:hover>td{
+
+.el-table--enable-row-hover .el-table__body tr:hover > td {
   background-color: transparent;
 }
-.el-message-box{
-  background:$color-bg;
+
+.el-message-box {
+  background: $color-bg;
 }
-.el-message-box__btns{
-  .el-button{
+
+.el-message-box__btns {
+  .el-button {
     width: 80px;
     height: 30px;
   }
+}
+
+.el-icon-delete {
+  color: red;
 }

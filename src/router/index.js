@@ -46,6 +46,14 @@ const routes = [
             meta: {
               needLogin: true
             }
+          },
+          {
+            path: 'addressmanage',
+            name: 'addressmanage',
+            component: () => import('@/views/UserCenter/AddressManage/AddressList'),
+            meta: {
+              needLogin: true
+            }
           }
         ]
       }

@@ -275,6 +275,15 @@ export default {
 
     .selected {
       box-shadow: inset 2px 2px 2px #BABECC, inset -2px -2px 5px #FFF;
+      &:hover{
+        color: #777777;
+      }
+      &:focus {
+        color: #777777;
+      }
+      &:active{
+        color: #777777;
+      }
     }
   }
 

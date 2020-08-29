@@ -1,48 +1,46 @@
 <template>
   <div>
-    <div class="order-card">
-      <div class="order-title">我的订单</div>
-      <div class="order-item-box" v-for="order in orderLsit" :key="order.orderNo">
-        <div class="order-status">{{order.status|statusFilter}}</div>
-        <div class="order-info">
-          <div>
-            <span>{{order.createTime|timeFilter}}</span>
-            <span class="vertical-line">|</span>
-            <span>{{order.addr.name}}</span>
-            <span class="vertical-line">|</span>
-            <span>订单号：{{order.orderNo}}</span></div>
-          <div>订单金额：
-            <span class="order-amount">{{order.amount}}</span>
-            元
-          </div>
-        </div>
-        <el-divider></el-divider>
-        <div class="box-outer">
-          <div>
-            <div class="goods-box" v-for="bl in order.bls" :key="bl.goodsId">
-              <img :src="bl.goods.mainImage">
-              <div class="goods-info">
-                <div>{{bl.goods.name}}</div>
-                <div class="unit-price">{{bl.goods.price}}元 × {{bl.num}}</div>
-              </div>
-            </div>
-          </div>
-          <div class="order-btn-box">
-            <el-button size="mini">订单详情</el-button>
-            <el-button @click="deleteOrder(order.id)" :id="'delete'+order.id">删除订单</el-button>
-          </div>
+    <div class="order-title">我的订单</div>
+    <div class="order-item-box" v-for="order in orderLsit" :key="order.orderNo">
+      <div class="order-status">{{order.status|statusFilter}}</div>
+      <div class="order-info">
+        <div>
+          <span>{{order.createTime|timeFilter}}</span>
+          <span class="vertical-line">|</span>
+          <span>{{order.addr.name}}</span>
+          <span class="vertical-line">|</span>
+          <span>订单号：{{order.orderNo}}</span></div>
+        <div>订单金额：
+          <span class="order-amount">{{order.amount}}</span>
+          元
         </div>
       </div>
-      <el-pagination
-          background
-          layout="prev, pager, next"
-          :page-size="pageSize"
-          :current-page.sync="currentPage"
-          :total="totalNum"
-          @current-change="currentChange"
-      >
-      </el-pagination>
+      <el-divider></el-divider>
+      <div class="box-outer">
+        <div>
+          <div class="goods-box" v-for="bl in order.bls" :key="bl.goodsId">
+            <img :src="bl.goods.mainImage">
+            <div class="goods-info">
+              <div>{{bl.goods.name}}</div>
+              <div class="unit-price">{{bl.goods.price}}元 × {{bl.num}}</div>
+            </div>
+          </div>
+        </div>
+        <div class="order-btn-box">
+          <el-button size="mini">订单详情</el-button>
+          <el-button @click="deleteOrder(order.id)" :id="'delete'+order.id">删除订单</el-button>
+        </div>
+      </div>
     </div>
+    <el-pagination
+        background
+        layout="prev, pager, next"
+        :page-size="pageSize"
+        :current-page.sync="currentPage"
+        :total="totalNum"
+        @current-change="currentChange"
+    >
+    </el-pagination>
   </div>
 </template>
 
@@ -144,13 +142,6 @@ export default {
   .order-title {
     font-size: 20px;
     margin-bottom: 20px;
-  }
-
-  .order-card {
-    width: 970px;
-    box-shadow: -3px -3px 5px #FFF, 3px 3px 5px #BABECC;
-    border-radius: 10px;
-    padding: 50px 60px;
   }
 
   .order-item-box {
