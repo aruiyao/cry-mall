@@ -17,9 +17,9 @@
                   v-model="keyword"
                   minlength="1"
                   maxlength="100"
-                  @keydown.enter.native="toGoodsList()"
+                  @keydown.enter.native="toGoodsList(keyword)"
               ></el-input>
-              <a @click="$router.push('/home')">全部商品</a>
+              <a @click="toGoodsList('')">全部商品</a>
 <!--              <a href="#">捐赠</a>-->
             </div>
 
@@ -129,8 +129,9 @@
         <div class="nav-sub-wrapper">
           <div class="w">
             <ul class="clearfix">
-              <li>全部商品</li>
-              <li>Github</li>
+              <li @click="$router.push('/home')">首页</li>
+              <li @click="toGoodsList('')">全部商品</li>
+              <li @click="toGithub">Github</li>
             </ul>
           </div>
         </div>
@@ -188,6 +189,9 @@ export default {
     // head.appendChild(ele);
   },
   methods: {
+    toGithub () {
+      window.open('https://github.com/aruiyao/cry-mall', '_blank');
+    },
     navFixed () {
       const st = document.documentElement.scrollTop || document.body.scrollTop;
       this.scrollLeft = document.documentElement.scrollLeft || document.body.scrollLeft;
@@ -252,8 +256,9 @@ export default {
         }
       }
     },
-    toGoodsList () {
-      this.$store.commit('keyword', this.keyword);
+    toGoodsList (keyword) {
+      this.$store.commit('keyword', keyword);
+      this.keyword = keyword
       this.$router.push({
         name: 'goodslist',
         query: { keyword: this.keyword }
