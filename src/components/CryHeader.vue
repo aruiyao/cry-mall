@@ -6,7 +6,7 @@
         <div class="w-box">
           <div class="nav-logo">
             <h1>
-              <!--<router-link to="/login" title="商城官网" class="to-home">CRY Mall</router-link>-->
+              <router-link to="/home" title="商城官网" class="to-home">CRY Mall</router-link>
             </h1>
           </div>
           <div class="right-box">
@@ -14,20 +14,21 @@
               <el-input
                   placeholder="请输入商品信息"
                   prefix-icon="el-icon-search"
-                  v-model="goodsInfo"
+                  v-model="keyword"
                   minlength="1"
                   maxlength="100"
+                  @keydown.enter.native="toGoodsList()"
               ></el-input>
-              <a href="#">全部商品</a>
-              <a href="#">捐赠</a>
+              <a @click="$router.push('/home')">全部商品</a>
+<!--              <a href="#">捐赠</a>-->
             </div>
 
             <div class="nav-aside" :class="{fixed:isFixed}">
               <!-- 用户 -->
               <div class="user pr">
-                <el-button icon="el-icon-user-solid" type="primary" class="icon-btn" @mouseover.native="isLogin=true"
-                           @mouseleave.native="isLogin=false"></el-button>
-                <div class="nav-popup pa el-icon-if">
+                <el-button icon="el-icon-user-solid" type="primary" class="icon-btn" id="userIcon"
+                           @click="$router.push('/usercenter/myorder')"></el-button>
+                <div class="nav-popup pa el-icon-if" v-if="isLogin">
                   <div class="nav-user-list">
                     <ul>
                       <!-- 头像 -->
@@ -62,17 +63,18 @@
 
               <!-- 购物车 -->
               <div class="shop pr">
-                <el-badge :value="totalNum" class="item" :hidden="userId===null">
-                  <el-button icon="el-icon-if icon-Cart" type="primary" class="icon-btn" @click="$router.push('/cart')"></el-button>
+                <el-badge :value="totalNum" class="item" :hidden="!isLogin">
+                  <el-button icon="el-icon-if icon-Cart" type="primary" class="icon-btn"
+                             @click="$router.push('/cart')"></el-button>
                 </el-badge>
 
                 <!-- 购物车显示 -->
-                <div class="nav-popup pa el-icon-if" v-if="userId!==null">
+                <div class="nav-popup pa el-icon-if" v-if="isLogin">
                   <div class="nav-user-list">
                     <div class="full">
                       <div class="nav-cart-items" id="nav-cart-items">
                         <ul>
-                          <li class="clearfix" v-for="(cart,index) in cartList" :key="index" @click="goToSubmit(cart)">
+                          <li class="clearfix" v-for="(cart,index) in cartList" :key="index" @click="toDetail(cart.goodsId)">
                             <div class="cart-item">
                               <div class="cart-item-inner">
                                 <div class="item-thumb">
@@ -145,8 +147,7 @@ export default {
   name: 'CryHeader',
   data () {
     return {
-      goodsInfo: '',
-      isLogin: false,
+      keyword: this.$route.query.keyword,
       isFixed: false,
       isHboxFixed: false,
       scrollLeft: '',
@@ -157,8 +158,15 @@ export default {
   computed: {
     ...mapState({
       cartList: state => state.cart.cartList,
-      totalNum: state => state.cart.cartTotalNum
+      totalNum: state => state.cart.cartTotalNum,
+      isLogin: state => state.isLogin
     })
+  },
+  created () {
+    this.$store.commit('keyword', this.keyword);
+    if (this.userId) {
+      this.getCart();
+    }
   },
   async mounted () {
     const ns = document.getElementsByClassName('nav-sub').length;
@@ -206,13 +214,14 @@ export default {
       // document.getElementById('main-frame').classList.remove('fancybox-margin');
       // document.getElementById('router-outer').classList.add('fancybox-margin');
     },
-    goToSubmit (cart) {
-      this.$router.push({
-        name: 'submitorder',
+    toDetail (id) {
+      const { href } = this.$router.resolve({
+        name: 'goodsdetail',
         query: {
-          goodsId: cart.goodsId
+          id: id
         }
       });
+      window.open(href, '_blank');
     },
     // 删除购物车
     async deleteCart (id) {
@@ -242,13 +251,16 @@ export default {
           this.$vmessage.error(res.data.msg);
         }
       }
-    }
-  },
-  created () {
-    if (this.userId){
-      this.getCart();
+    },
+    toGoodsList () {
+      this.$store.commit('keyword', this.keyword);
+      this.$router.push({
+        name: 'goodslist',
+        query: { keyword: this.keyword }
+      });
     }
   }
+
 };
 </script>
 <style lang="scss" scoped>
@@ -277,7 +289,8 @@ export default {
     width: 100%;
     min-width: 1220px;
     box-shadow: 1px 1px 6px $color-shadow;
-    &.fixed{
+
+    &.fixed {
       position: fixed;
       top: 0;
       z-index: 10;
@@ -316,7 +329,7 @@ export default {
     &.fixed {
       position: fixed;
       top: -40px;
-      margin-left: 314px;
+      margin-left: 259px;
       transform: translateY(50px);
       transition: transform .3s cubic-bezier(.165, .84, .44, 1);
 

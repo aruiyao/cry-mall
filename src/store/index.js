@@ -10,8 +10,16 @@ export default new Vuex.Store({
     cart
   },
   state: {
+    isLogin: false,
+    keyword: ''
   },
   mutations: {
+    isLogin (state, paylod) {
+      state.isLogin = paylod;
+    },
+    keyword (state, paylod) {
+      state.keyword = paylod;
+    }
   },
   actions: {}
 });

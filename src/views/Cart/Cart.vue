@@ -17,7 +17,7 @@
         <el-table-column type="selection" width="55"></el-table-column>
         <el-table-column class-name="goods-image" width="130">
           <template slot-scope="scope">
-            <img :src="scope.row.goods.mainImage">
+            <img :src="scope.row.goods.mainImage" @click="toDetail(scope.row.goodsId)" style="cursor: pointer;">
           </template>
         </el-table-column>
         <el-table-column label="商品名称" width="380">
@@ -56,7 +56,7 @@
         <div>
           <span>合 计：</span>
           <span class="cart-total">{{totalPrice}}</span> 元
-          <el-button id="submit" @click="toSubmit">去结算</el-button>
+          <el-button id="submit" @click="toSubmit" type="primary">去结算</el-button>
         </div>
       </div>
     </div>
@@ -113,6 +113,15 @@ export default {
   mounted () {
   },
   methods: {
+    toDetail (id) {
+      const { href } = this.$router.resolve({
+        name: 'goodsdetail',
+        query: {
+          id: id
+        }
+      });
+      window.open(href, '_blank');
+    },
     selfMul () {
       return accMul(...arguments);
     },

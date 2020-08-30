@@ -100,7 +100,7 @@
       >
         <el-table-column class-name="goods-image" width="130">
           <template slot-scope="scope">
-            <img :src="scope.row.goods.mainImage">
+            <img :src="scope.row.goods.mainImage" @click="toDetail(scope.row.goodsId)" style="cursor: pointer">
           </template>
         </el-table-column>
         <el-table-column label="商品名称" width="380">
@@ -132,7 +132,7 @@
         <div>
           <span>合 计：</span>
           <span class="cart-total">{{totalPrice}}</span> 元
-          <el-button id="submit" @click="submitOrder">立即下单</el-button>
+          <el-button id="submit" @click="submitOrder" type="primary">立即下单</el-button>
         </div>
       </div>
     </div>
@@ -209,6 +209,15 @@ export default {
     }
   },
   methods: {
+    toDetail (id) {
+      const { href } = this.$router.resolve({
+        name: 'goodsdetail',
+        query: {
+          id: id
+        }
+      });
+      window.open(href, '_blank');
+    },
     selfMul () {
       return accMul(...arguments);
     },
@@ -346,6 +355,10 @@ export default {
       const [err, res] = await this.$http.asyncPost('api/v1.0/check/addOrder', params);
       if (!err && res) {
         if (res.data.success) {
+          this.$router.push({
+            name: 'pay',
+            query: { orderId: res.data.data.id }
+          });
         } else {
           this.$vmessage.error(res.data.msg);
         }
@@ -460,7 +473,7 @@ export default {
       }
     }
 
-    .default-address{
+    .default-address {
       position: absolute;
       top: 5px;
       left: -13px;
@@ -472,103 +485,104 @@ export default {
       transform: rotateZ(-45deg);
       letter-spacing: 1px;
       text-shadow: none;
-  }
-  .consignee {
-    font-size: 16px;
-    color: #FF9800;
-    font-weight: bolder;
-    letter-spacing: 2px;
+    }
+
+    .consignee {
+      font-size: 16px;
+      color: #FF9800;
+      font-weight: bolder;
+      letter-spacing: 2px;
+    }
+
+    .phone {
+      margin-top: 15px;
+      font-family: menlo, tahoma, sans-serif;
+      font-size: 17px;
+      letter-spacing: 3px
+    }
+
+    .address {
+      margin-top: 10px;
+      line-height: 1.5;
+      font-size: 13px;
+      letter-spacing: 2px;
+    }
+
+    .add-box.el-card:active {
+      box-shadow: inset 5px 5px 10px rgba(0, 0, 0, 0.2), inset -5px -5px 10px white;
+    }
+
+    .add-box ::v-deep .el-card__body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .add-inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .add-inner p {
+      margin-top: 10px;
+    }
   }
 
-  .phone {
-    margin-top: 15px;
-    font-family: menlo, tahoma, sans-serif;
-    font-size: 17px;
-    letter-spacing: 3px
+  .address-form {
+    width: 300px;
+    margin: 0 auto;
+
+    .el-button, ::v-deep .el-input__inner, ::v-deep.el-textarea__inner {
+      border-radius: 10px;
+    }
+
+    .el-button {
+      width: 100%;
+      height: 40px;
+    }
   }
 
-  .address {
-    margin-top: 10px;
-    line-height: 1.5;
-    font-size: 13px;
-    letter-spacing: 2px;
+  .buy-list-box {
+    margin-top: 20px;
   }
 
-  .add-box.el-card:active {
-    box-shadow: inset 5px 5px 10px rgba(0, 0, 0, 0.2), inset -5px -5px 10px white;
+  .goods-image img {
+    width: 80px;
+    height: 80px;
   }
 
-  .add-box ::v-deep .el-card__body {
+  .settle-box {
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
-  }
-
-  .add-inner {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .add-inner p {
-    margin-top: 10px;
-  }
-}
-
-.address-form {
-  width: 300px;
-  margin: 0 auto;
-
-  .el-button, ::v-deep .el-input__inner, ::v-deep.el-textarea__inner {
+    height: 80px;
     border-radius: 10px;
+    padding: 0 40px;
+    margin-top: 20px;
+    box-shadow: $box-shadow;
+    letter-spacing: 1px;
   }
 
-  .el-button {
-    width: 100%;
+  .settle-box .el-button {
+    width: 150px;
     height: 40px;
-  }
-}
-
-.buy-list-box {
-  margin-top: 20px;
-}
-
-.goods-image img {
-  width: 80px;
-  height: 80px;
-}
-
-.settle-box {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  height: 80px;
-  border-radius: 10px;
-  padding: 0 40px;
-  margin-top: 20px;
-  box-shadow: $box-shadow;
-  letter-spacing: 1px;
-}
-
-.settle-box .el-button {
-  width: 150px;
-  height: 40px;
-  margin-left: 40px;
-}
-
-::v-deep .operation {
-  .cell {
-    overflow: unset;
+    margin-left: 40px;
   }
 
-  .el-button {
-    width: 20px;
-    height: 20px;
-  }
-}
+  ::v-deep .operation {
+    .cell {
+      overflow: unset;
+    }
 
-.cart-total {
-  color: rgb(255, 103, 0);
-  font-size: 30px;
-}
+    .el-button {
+      width: 20px;
+      height: 20px;
+    }
+  }
+
+  .cart-total {
+    color: rgb(255, 103, 0);
+    font-size: 30px;
+  }
 </style>

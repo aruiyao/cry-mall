@@ -9,6 +9,7 @@ import App from './App.vue';
 import VMessage from '@/components/messageTips';
 import VMessageBox from '@/components/messageBox';
 import VueLazyload from 'vue-lazyload';
+import { getStore } from '@/utils/storage';
 
 Vue.config.goodsionTip = false;
 
@@ -19,34 +20,39 @@ Vue.prototype.$vmessagebox = VMessageBox;
 Vue.use(VueLazyload, {
   preLoad: 1.3,
   error: 'dist/error.png',
-  loading: 'dist/loading.gif',
+  loading: 'dis/loading.gif',
   attempt: 1
 });
 
 Vue.use(Element);
 router.beforeEach(async (to, from, next) => {
-  const [err, res] = await selfAxios.asyncGet('api/v1.0/checkLogin');
-  if (!err && res) {
-    if (res.data.success) {
-      const isLogin = res.data.data.isLogin;
-      if (to.meta.needLogin) {
-        if (!isLogin) {
-          next({
-            name: 'login',
-            query: {
-              redirectUrl: from.fullPath
-            }
-          });
+  if (to.path !== '/login') {
+    const [err, res] = await selfAxios.asyncGet('api/v1.0/checkLogin');
+    if (!err && res) {
+      if (res.data.success) {
+        const isLogin = res.data.data.isLogin;
+        store.commit('isLogin', isLogin);
+        if (to.meta.needLogin) {
+          if (!isLogin) {
+            next({
+              name: 'login',
+              query: {
+                redirectUrl: to.fullPath
+              }
+            });
+          } else {
+            next();
+          }
         } else {
           next();
         }
       } else {
-        next();
+        VMessage.error(res.data.msg);
+        next({ path: '/login' });
       }
-    } else {
-      VMessage.error(res.data.msg);
-      next({ path: '/login' });
     }
+  } else {
+    next();
   }
 });
 new Vue({

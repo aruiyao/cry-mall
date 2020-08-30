@@ -12,18 +12,18 @@ const routes = [
     children: [
       {
         path: 'home',
-        name: 'Home',
+        name: 'home',
         component: () => import('@/views/Home/Home'),
         meta: {
           needLogin: false
         }
       },
       {
-        path: 'user',
-        name: 'user',
-        component: () => import('@/views/User/User'),
+        path: 'goodslist',
+        name: 'goodslist',
+        component: () => import('@/views/GoodsList/GoodsList'),
         meta: {
-          needLogin: true
+          needLogin: false
         }
       },
       {
@@ -63,6 +63,14 @@ const routes = [
     path: '/submitorder',
     name: 'submitorder',
     component: () => import('@/views/SubmitOrder/SubmitOrder'),
+    meta: {
+      needLogin: true
+    }
+  },
+  {
+    path: '/pay',
+    name: 'pay',
+    component: () => import('@/views/Pay/Pay'),
     meta: {
       needLogin: true
     }

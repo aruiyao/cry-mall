@@ -2,6 +2,7 @@ import axios from 'axios';
 import vMessage from '@/components/messageTips';
 import qs from 'qs';
 import router from '@/router';
+import { getStore } from '@/utils/storage';
 
 const service = axios.create({
   // 请求超时时间
@@ -13,9 +14,11 @@ const service = axios.create({
 // 请求拦截器
 service.interceptors.request.use(
   async config => {
-    if (localStorage.getItem('token')) {
-      config.headers.common.Authorization = localStorage.getItem('token');
-      config.headers.common.userId = localStorage.getItem('userId');
+    const userId = getStore('userId');
+    const token = getStore('token');
+    if (token && userId) {
+      config.headers.common.Authorization = token;
+      config.headers.common.userId = userId;
     }
     return config;
   },

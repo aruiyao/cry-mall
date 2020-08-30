@@ -2,7 +2,7 @@
   <div>
     <div class="order-title">我的订单</div>
     <div class="order-item-box" v-for="order in orderLsit" :key="order.orderNo">
-      <div class="order-status">{{order.status|statusFilter}}</div>
+      <div class="order-status" :class="{'wait-pay':order.status===0}">{{order.status|statusFilter}}</div>
       <div class="order-info">
         <div>
           <span>{{order.createTime|timeFilter}}</span>
@@ -27,7 +27,7 @@
           </div>
         </div>
         <div class="order-btn-box">
-          <el-button size="mini">订单详情</el-button>
+          <el-button type="primary" v-if="order.status===0" @click="toPay(order.id)">去付款</el-button>
           <el-button @click="deleteOrder(order.id)" :id="'delete'+order.id">删除订单</el-button>
         </div>
       </div>
@@ -105,7 +105,14 @@ export default {
             this.$vmessage.error(res.data.msg);
           }
         }
-      }).catch(() => {});
+      }).catch(() => {
+      });
+    },
+    toPay (orderId) {
+      this.$router.push({
+        name: 'pay',
+        query: { orderId }
+      });
     }
   },
   filters: {
@@ -121,10 +128,10 @@ export default {
       let returnVal = '';
       switch (val) {
         case 0:
-          returnVal = '待支付';
+          returnVal = '等待付款';
           break;
         case 1:
-          returnVal = '待收货';
+          returnVal = '已支付';
           break;
         case 2:
           returnVal = '关闭交易';
@@ -154,6 +161,10 @@ export default {
   .order-status {
     font-size: 18px;
     margin-bottom: 10px;
+  }
+
+  .order-status.wait-pay {
+    color: #ff6700;
   }
 
   .order-info {

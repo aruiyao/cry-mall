@@ -128,7 +128,7 @@ export default {
     async addCart () {
       const params = {
         userId: this.userId,
-        goodsId: 1,
+        goodsId: this.$route.query.id,
         num: this.num
       };
       const [err, res] = await this.$http.asyncPost('api/v1.0/check/addCart', params);
@@ -169,7 +169,7 @@ export default {
       };
     },
     totalPrice () {
-      if (this.goods.price) {
+      if (this.goods.price !== '' && this.goods.price !== null) {
         return accMul(this.num, this.goods.price);
       } else {
         return '';
